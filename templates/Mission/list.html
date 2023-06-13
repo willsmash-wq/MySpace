@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    Mission
+{% endblock title %}
+{% block content %}
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a href="{% url 'myapp:mission_list' %}?order=newest">
+                        New
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="{% url 'myapp:mission_list' %}?order=total_views">
+                        Hot
+                    </a>
+                </li>
+            </ol>
+        </nav>
+        <div class="row mt-2">
+            <div class="col-12 mb-4">
+                <form class="form-inline" method="GET" action="{% url 'myapp:mission_list' %}">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
+                    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+                </form>
+            </div>
+            {% for mission in missions %}
+                <div class="col-12 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h4 class="card-title">{{ mission.title }}</h4>
+                            <p class="card-text">{{ mission.body|slice:'100' }}...</p>
+                        </div>
+                        <div class="card-footer d-flex align-items-center">
+                            <a href="{% url 'myapp:mission_detail' mission.id %}" class="btn btn-primary mr-auto">Read</a>
+                            <div class="text-muted small rounded p-2">
+                                <span class="font-weight-bold">Created:</span>
+                                <span class="ml-1">{{ mission.created }}</span>
+                            </div>
+                            <div class="text-muted small rounded p-2 ml-2">
+                                <span class="font-weight-bold">Views:</span>
+                                <span class="ml-1">{{ mission.total_views }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="pagination">
+        <div class="m-auto">
+            <span class="step-links">
+                {% if missions.has_previous %}
+                    <a href="?page=1" class="btn btn-success">
+                        &laquo; 1
+                    </a>
+                    <span>...</span>
+                    <a href="?page={{ missions.previous_page_number }}" class="btn btn-secondary">
+                        {{ missions.previous_page_number }}
+                    </a>
+                {% endif %}
+                <span class="current btn btn-danger btn-lg">
+                    {{ missions.number }}
+                </span>
+                {% if missions.has_next %}
+                    <a href="?page={{ missions.next_page_number }}" class="btn btn-secondary">
+                        {{ missions.next_page_number }}
+                    </a>
+                    <span>...</span>
+                    <a href="?page={{ missions.paginator.num_pages }}" class="btn btn-success">
+                        {{ missions.paginator.num_pages }} &raquo;
+                    </a>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+{% endblock content %}

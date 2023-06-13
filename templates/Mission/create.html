@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    make
+{% endblock title %}
+{% block  content %}
+<script src="//cdn.ckeditor.com/4.21.0/full/ckeditor.js"></script>
+
+<div class="container">
+    <div class="col-12">
+        <br>
+        <form method="post" action=".">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="title">Title</label>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="title" name="title">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="body" >Body</label>
+                <div class="form-group">
+                    {{ mission_post_form.body }} <!-- 使用 form 渲染出来的字段 -->
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">submit</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    CKEDITOR.replace('id_body');  // Make sure 'id_body' matches the actual ID of your textarea
+</script>
+
+{% endblock content %}

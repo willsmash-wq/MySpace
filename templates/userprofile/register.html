@@ -1,0 +1,208 @@
+{% load static %}
+
+<head>
+    {% if user.is_authenticated %}
+        <script>
+            function user_delete() {
+                var r = confirm("Wanna delete this user?");
+                if (r == true) {
+                    window.location = '{% url "userprofile:delete" user.id %}';
+                }
+            }
+        </script>
+    {% endif %}
+</head>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+        <a class="navbar-brand" href="#">My Site</a>
+        <div>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'myapp:mission_list' %}">Mission</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'myapp:mission_create' %}">New</a>
+                </li>
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ user.username }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{% url "userprofile:edit" user.id %}">User</a>
+                            <a class="dropdown-item" href="{% url "userprofile:logout" %}">Exit</a>
+                            <a class="dropdown-item" href="#" onclick="user_delete()">Delete</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'userprofile:login' %}">Login</a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>register</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="all,follow">
+    <!-- Bootstrap CSS-->
+    <link rel="stylesheet" href="https://www.jq22.com/jquery/bootstrap-4.2.1.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+    <link rel="stylesheet" href="../../static/bootstrap/css/style.default.css" id="theme-stylesheet">
+
+
+</head>
+<body>
+<div class="page login-page">
+    <div class="container d-flex align-items-center">
+        <div class="form-holder has-shadow">
+            <div class="row">
+                <!-- Logo & Information Panel-->
+                <div class="col-lg-6">
+                    <div class="info d-flex align-items-center">
+                        <div class="content">
+                            <div class="logo">
+                                <h1>欢迎注册</h1>
+                            </div>
+                            <p>网格交流论坛</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Form Panel    -->
+                <div class="col-lg-6 bg-white">
+                    <div class="form d-flex align-items-center">
+                        <div class="content">
+                            <form method="post" action=".">
+                                {% csrf_token %}
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="username" name='username' type="text"
+                                           placeholder="用户名" data-sb-validations="required"/>
+
+                                    <div class="invalid-feedback" data-sb-feedback="username:required">A name is
+                                        required.
+                                    </div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="email" name='email' type="email"
+                                           placeholder="邮箱" data-sb-validations="required,email"/>
+
+                                    <div class="invalid-feedback" data-sb-feedback="email:required">An email is
+                                        required.
+                                    </div>
+                                    <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.
+                                    </div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="password" name='password' type="password"
+                                           placeholder="密码" data-sb-validations="required"/>
+
+                                    <div class="invalid-feedback" data-sb-feedback="password:required">A password is
+                                        required.
+                                    </div>
+                                </div>
+                                <div class="form-floating mb-3">
+                                    <input class="form-control" id="password2" name='password2' type="password"
+                                           placeholder="再次输入密码" data-sb-validations="required"/>
+
+                                    <div class="invalid-feedback" data-sb-feedback="password:required">A password is
+                                        required.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button id="regbtn" type="submit" name="registerSubmit" class="btn btn-primary">
+                                        注册
+                                    </button>
+                                </div>
+
+                                <small>已有账号?</small><a href="{% url 'userprofile:login' %}"
+                                                           class="signup">&nbsp;登录</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- JavaScript files-->
+<script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
+<script src="https://www.jq22.com/jquery/bootstrap-4.2.1.js"></script>
+<script>
+    $(function () {
+        /*错误class  form-control is-invalid
+        正确class  form-control is-valid*/
+        var flagName = false;
+        var flagPas = false;
+        var flagPass = false;
+        /*验证用户名*/
+        var name, passWord, passWords;
+        $("#register-username").change(function () {
+            name = $("#register-username").val();
+            if (name.length < 2 || name.length > 10) {
+                $("#register-username").removeClass("form-control is-valid")
+                $("#register-username").addClass("form-control is-invalid");
+                flagName = false;
+            } else {
+                $("#register-username").removeClass("form-control is-invalid")
+                $("#register-username").addClass("form-control is-valid");
+                flagName = true;
+            }
+        })
+        /*验证密码*/
+        $("#register-password").change(function () {
+            passWord = $("#register-password").val();
+            if (passWord.length < 6 || passWord.length > 18) {
+                $("#register-password").removeClass("form-control is-valid")
+                $("#register-password").addClass("form-control is-invalid");
+                flagPas = false;
+            } else {
+                $("#register-password").removeClass("form-control is-invalid")
+                $("#register-password").addClass("form-control is-valid");
+                flagPas = true;
+            }
+        })
+        /*验证确认密码*/
+        $("#register-passwords").change(function () {
+            passWords = $("#register-passwords").val();
+            if ((passWord != passWords) || (passWords.length < 6 || passWords.length > 18)) {
+                $("#register-passwords").removeClass("form-control is-valid")
+                $("#register-passwords").addClass("form-control is-invalid");
+                flagPass = false;
+            } else {
+                $("#register-passwords").removeClass("form-control is-invalid")
+                $("#register-passwords").addClass("form-control is-valid");
+                flagPass = true;
+            }
+        })
+
+
+        $("#regbtn").click(function () {
+            if (flagName && flagPas && flagPass) {
+                localStorage.setItem("name", name);
+                localStorage.setItem("passWord", passWord);
+                location = "login.html"
+            } else {
+                if (!flagName) {
+                    $("#register-username").addClass("form-control is-invalid");
+                }
+                if (!flagPas) {
+                    $("#register-password").addClass("form-control is-invalid");
+                }
+                if (!flagPass) {
+                    $("#register-passwords").addClass("form-control is-invalid");
+                }
+            }
+        })
+    })
+</script>
+</body>
+</html>

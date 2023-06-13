@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}
+    Mission
+{% endblock title %}
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9">
+                <h1 class="mt-4">标题：{{ mission.title }}</h1>
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <div class="alert alert-success">
+                            任务发布者: {{ mission.mission_taker }}
+                            {% if user == mission.mission_taker %}
+                                <br>
+                                这是你的文章，除管理员以外，只有你能够删除或者编辑你的文章
+                            {% else %}
+                                <br>
+                                这不是你的文章，如果你不是管理员，那你将不能够对文章进行删除或者编辑操作
+                            {% endif %}
+                            <br>
+                            浏览量： {{ mission.total_views }}
+                        </div>
+                        <div class="mt-4">
+                            <p>内容：{{ mission.body|safe }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% if user.username == mission.mission_taker or user.username == 'root' %}
+                    <div class="my-4">
+                        <button type="button" class="btn btn-primary mr-2" onclick="confirm_delete()">删除</button>
+                        <button type="button" class="btn btn-primary" onclick="confirm_edit()">编辑</button>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="col-md-3 mt-4">
+                <h4><strong>Contents</strong></h4>
+                <hr>
+                <div>
+                    {{ toc|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function confirm_delete() {
+            var r = confirm("确定删除吗？");
+            if (r == true && ("{{ user.username }}" == "{{ mission.mission_taker }}" || "{{ user.username }}" == "root")) {
+                window.location = '{% url "myapp:mission_delete" mission.id %}';
+            } else if (r == false) {
+                window.alert("取消删除");
+            } else {
+                window.alert("这不是你的文章，你无权删除");
+            }
+        }
+
+        function confirm_edit() {
+            var r = confirm("确定编辑吗？");
+            if (r == true && ("{{ user.username }}" == "{{ mission.mission_taker }}" || "{{ user.username }}" == "root")) {
+                window.location = '{% url "myapp:mission_update" mission.id %}';
+           } else if (r == false) {
+                window.alert("取消编辑");
+            } else {
+                window.alert("这不是你的文章，你无权编辑");
+            }
+        }
+    </script>
+{% endblock content %}
