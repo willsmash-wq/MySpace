@@ -30,7 +30,10 @@
                 <div class="col-12 mb-4">
                     <div class="card">
                         <div class="card-body">
-                            <h4 class="card-title">{{ mission.title }}</h4>
+                            <div class="d-flex align-items-center mb-3">
+                                <div class="ios-icon"></div>
+                                <h4 class="card-title font-weight-bold ml-2">{{ mission.title }}</h4>
+                            </div>
                             <p class="card-text">{{ mission.body|slice:'100' }}...</p>
                         </div>
                         <div class="card-footer d-flex align-items-center">
