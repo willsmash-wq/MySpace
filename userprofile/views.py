@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -69,6 +69,14 @@ def user_register(request):
         return render(request, 'userprofile/register.html', context)
     else:
         return HttpResponse("请使用GET或POST请求数据")
+
+def registered_users(request):
+    users = User.objects.values('username')  # 获取所有用户的用户名
+    user_list = list(users)  # 转换为Python list
+    print(user_list)  # 打印用户列表
+    return JsonResponse({'users': user_list}, safe=False)
+
+
 
 
 @login_required(login_url='/userprofile/login/')
