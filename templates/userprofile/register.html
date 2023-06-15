@@ -84,14 +84,31 @@
                         <div class="content">
                             <form method="post" action=".">
                                 {% csrf_token %}
-                                <div class="form-floating mb-3">
+                                <div class="form-floating mb-3 d-flex align-items-center">
                                     <input class="form-control" id="username" name='username' type="text"
-                                           placeholder="用户名" data-sb-validations="required"/>
+                                           placeholder="用户名" style="flex-grow: 1;" data-sb-validations="required"/>
+                                    <button id="username-check" type="button" class="btn btn-primary"
+                                            style="margin-left: 10px; white-space: nowrap; padding: 0.5rem 0.5rem;">
+                                        检查用户名
+                                    </button>
+                                </div>
 
-                                    <div class="invalid-feedback" data-sb-feedback="username:required">A name is
-                                        required.
+                                <!-- Toast Component -->
+                                <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+                                    <div id="username-toast" class="toast hide" role="alert" aria-live="assertive"
+                                         aria-atomic="true">
+                                        <div class="toast-header">
+                                            <strong class="me-auto">用户名重复检测</strong>
+                                            <button type="button" class="btn-close" data-bs-dismiss="toast"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="toast-body">
+                                            <div id="toast-message"></div>
+                                        </div>
                                     </div>
                                 </div>
+
+
                                 <div class="form-floating mb-3">
                                     <input class="form-control" id="email" name='email' type="email"
                                            placeholder="邮箱" data-sb-validations="required,email"/>
@@ -138,6 +155,41 @@
 <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
 <script src="https://www.jq22.com/jquery/bootstrap-4.2.1.js"></script>
 <script>
+
+    $(function () {
+        var toast = new bootstrap.Toast(document.getElementById('username-toast'));
+
+        $("#username-check").click(function () {
+            var username = $("#username").val();
+
+            // 使用 jQuery AJAX 向后端发送 GET 请求
+            $.ajax({
+                type: "GET",
+                url: "/userprofile/api/check-username",  // 假设这是检查用户名的API地址
+                data: {
+                    'username': username
+                },
+                success: function (response) {
+                    // 响应结果中应包含是否有重复用户名的信息
+                    if (response.is_taken) {
+                        $("#toast-message").text("用户名已被使用");
+                    } else {
+                        $("#toast-message").text("用户名可用");
+                    }
+
+                    // 显示Toast
+                    toast.show();
+
+                    // 2秒后自动隐藏Toast
+                    setTimeout(function () {
+                        toast.hide();
+                    }, 2000);
+                }
+            });
+        });
+    });
+
+
     $(function () {
         /*错误class  form-control is-invalid
         正确class  form-control is-valid*/

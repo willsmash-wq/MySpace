@@ -9,7 +9,7 @@ class LoginRequiredMiddleware:
     def __call__(self, request):
         # 列出所有允许未登录用户访问的URL
         unauthenticated_pages = [reverse('userprofile:login'), reverse('userprofile:register'),
-                                 reverse('userprofile:registered_users')]
+                                 reverse('userprofile:registered_users'), reverse('userprofile:check-username')]
         if not request.user.is_authenticated:
             if request.path_info not in unauthenticated_pages:
                 return redirect('userprofile:login')
