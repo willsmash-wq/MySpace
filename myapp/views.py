@@ -13,7 +13,18 @@ from .models import Mission
 from django.core.paginator import Paginator
 import markdown
 # 视图函数
+from django.contrib.auth.decorators import login_required
+
+@login_required
 def mission_list(request):
+    show_guide = False
+    # 检查用户的部门和班组信息
+    department = request.user.profile.department
+    group = request.user.profile.team  # 修改此处，使用team代替group
+    # 如果部门或班组是虚拟的，那么将show_guide设为True
+    if department == '虚拟部门' or group == '虚拟班组':  # 修改此处，将virtual_department和virtual_group改为中文
+        show_guide = True
+
     if request.GET.get('order') == 'total_views':
         mission_list = Mission.objects.all().order_by('-total_views')
         order = 'total_views'
@@ -23,6 +34,7 @@ def mission_list(request):
     else:
         mission_list = Mission.objects.all()
         order = 'normal'
+
     search_keyword = request.GET.get('search')
     if search_keyword:
         mission_list = mission_list.filter(
@@ -32,8 +44,8 @@ def mission_list(request):
     paginator = Paginator(mission_list, 9)
     page = request.GET.get('page')
     missions = paginator.get_page(page)
-    # 修改此行
-    context = {'missions': missions, 'order': order}
+
+    context = {'missions': missions, 'order': order, 'show_guide': show_guide}
     return render(request, 'mission/list.html', context)
 
 # 文章详情

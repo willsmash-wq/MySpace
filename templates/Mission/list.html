@@ -5,6 +5,11 @@
 {% endblock title %}
 {% block content %}
     <div class="container">
+        {% if show_guide %}
+            <div class="alert alert-warning" role="alert">
+                请完善你的部门和班组信息
+            </div>
+        {% endif %}
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item">
@@ -22,7 +27,8 @@
         <div class="row mt-2">
             <div class="col-12 mb-4">
                 <form class="form-inline" method="GET" action="{% url 'myapp:mission_list' %}">
-                    <input class="form-control mr-sm-2" type="search" placeholder="按照关键字进行搜索" aria-label="Search" name="search">
+                    <input class="form-control mr-sm-2" type="search" placeholder="按照关键字进行搜索"
+                           aria-label="Search" name="search">
                     <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">搜索</button>
                 </form>
             </div>
@@ -37,7 +43,8 @@
                             <p class="card-text">{{ mission.body|slice:'100' }}...</p>
                         </div>
                         <div class="card-footer d-flex align-items-center">
-                            <a href="{% url 'myapp:mission_detail' mission.id %}" class="btn btn-primary mr-auto">阅读</a>
+                            <a href="{% url 'myapp:mission_detail' mission.id %}"
+                               class="btn btn-primary mr-auto">阅读</a>
                             <div class="text-muted small rounded p-2">
                                 <span class="font-weight-bold">创建时间:</span>
                                 <span class="ml-1">{{ mission.created }}</span>
