@@ -1,11 +1,4 @@
-from django.shortcuts import render
-
-# Create your views here.
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-from django.shortcuts import render
-
 from userprofile.forms import DepartmentTeamForm
 from .forms import MissionForm
 from django.contrib.auth.models import User
