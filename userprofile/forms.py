@@ -27,3 +27,22 @@ class ProfileForm(forms.ModelForm):
    class Meta:
       model = Profile
       fields = ('phone', 'avatar', 'bio', 'department', 'team')
+
+
+class DepartmentTeamForm(forms.ModelForm):
+   DEPARTMENT_CHOICES = [
+      ('业务运营与IT支撑中心', '业务运营与IT支撑中心'),
+   ]
+
+   TEAM_CHOICES = [
+      ('数据支撑班', '数据支撑班'),
+      ('业务稽核班', '业务稽核班'),
+   ]
+
+   department = forms.ChoiceField(choices=DEPARTMENT_CHOICES)
+   team = forms.ChoiceField(choices=TEAM_CHOICES)
+
+   class Meta:
+      model = Profile
+      fields = ('department', 'team')
+

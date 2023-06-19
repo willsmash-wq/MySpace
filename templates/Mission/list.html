@@ -4,60 +4,96 @@
     Mission
 {% endblock title %}
 {% block content %}
-    <div class="container">
-        {% if show_guide %}
-            <div class="alert alert-warning" role="alert">
-                请完善你的部门和班组信息
+    <!-- 提醒框 -->
+    {% if show_guide %}
+        <div class="alert alert-warning" role="alert" id="guide-alert"
+             style="border-radius: 20px; box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); background-color: rgba(232, 240, 254, 0.8); color: #1967d2; padding: 20px;">
+            <p style="margin-bottom: 20px;">请完善你的部门和班组信息</p>
+            <!-- 添加一个按钮，点击这个按钮可以打开模态对话框 -->
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#departmentTeamModal"
+                    style="border-radius: 50px; background: linear-gradient(45deg, rgba(30, 136, 229, 0.8) 0%, rgba(38, 198, 218, 0.8) 100%); box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); transition: all 0.3s; padding: 10px 20px;">
+                选择部门和班组
+            </button>
+        </div>
+    {% endif %}
+
+    <!-- 模态对话框 -->
+    <div class="modal fade" id="departmentTeamModal" tabindex="-1" role="dialog"
+         aria-labelledby="departmentTeamModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content"
+                 style="border-radius: 20px; box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); background-color: rgba(255, 255, 255, 0.4); padding: 20px;">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="departmentTeamModalLabel" style="color: #1967d2;">选择部门和班组</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none;">
+                        <span aria-hidden="true" style="color: #1967d2;">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- 部门和班组的表单 -->
+                    <form method="POST" style="margin-top: 20px;">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-primary"
+                                style="border-radius: 50px; background: linear-gradient(45deg, rgba(30, 136, 229, 0.8) 0%, rgba(38, 198, 218, 0.8) 100%); box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); transition: all 0.3s; padding: 10px 20px; margin-top: 20px;">
+                            提交
+                        </button>
+                    </form>
+                </div>
             </div>
-        {% endif %}
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item">
-                    <a href="{% url 'myapp:mission_list' %}?order=newest">
-                        发布时间排序
-                    </a>
-                </li>
-                <li class="breadcrumb-item">
-                    <a href="{% url 'myapp:mission_list' %}?order=total_views">
-                        浏览量排序
-                    </a>
-                </li>
-            </ol>
-        </nav>
-        <div class="row mt-2">
+        </div>
+    </div>
+
+
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'myapp:mission_list' %}?order=newest">
+                    发布时间排序
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'myapp:mission_list' %}?order=total_views">
+                    浏览量排序
+                </a>
+            </li>
+        </ol>
+    </nav>
+    <div class="row mt-2">
+        <div class="col-12 mb-4">
+            <form class="form-inline" method="GET" action="{% url 'myapp:mission_list' %}">
+                <input class="form-control mr-sm-2" type="search" placeholder="按照关键字进行搜索"
+                       aria-label="Search" name="search">
+                <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">搜索</button>
+            </form>
+        </div>
+        {% for mission in missions %}
             <div class="col-12 mb-4">
-                <form class="form-inline" method="GET" action="{% url 'myapp:mission_list' %}">
-                    <input class="form-control mr-sm-2" type="search" placeholder="按照关键字进行搜索"
-                           aria-label="Search" name="search">
-                    <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">搜索</button>
-                </form>
-            </div>
-            {% for mission in missions %}
-                <div class="col-12 mb-4">
-                    <div class="card">
-                        <div class="card-body">
-                            <div class="d-flex align-items-center mb-3">
-                                <div class="ios-icon"></div>
-                                <h4 class="card-title font-weight-bold ml-2">{{ mission.title }}</h4>
-                            </div>
-                            <p class="card-text">{{ mission.body|slice:'100' }}...</p>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="ios-icon"></div>
+                            <h4 class="card-title font-weight-bold ml-2">{{ mission.title }}</h4>
                         </div>
-                        <div class="card-footer d-flex align-items-center">
-                            <a href="{% url 'myapp:mission_detail' mission.id %}"
-                               class="btn btn-primary mr-auto">阅读</a>
-                            <div class="text-muted small rounded p-2">
-                                <span class="font-weight-bold">创建时间:</span>
-                                <span class="ml-1">{{ mission.created }}</span>
-                            </div>
-                            <div class="text-muted small rounded p-2 ml-2">
-                                <span class="font-weight-bold">浏览量:</span>
-                                <span class="ml-1">{{ mission.total_views }}</span>
-                            </div>
+                        <p class="card-text">{{ mission.body|slice:'100' }}...</p>
+                    </div>
+                    <div class="card-footer d-flex align-items-center">
+                        <a href="{% url 'myapp:mission_detail' mission.id %}"
+                           class="btn btn-primary mr-auto">阅读</a>
+                        <div class="text-muted small rounded p-2">
+                            <span class="font-weight-bold">创建时间:</span>
+                            <span class="ml-1">{{ mission.created }}</span>
+                        </div>
+                        <div class="text-muted small rounded p-2 ml-2">
+                            <span class="font-weight-bold">浏览量:</span>
+                            <span class="ml-1">{{ mission.total_views }}</span>
                         </div>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
+            </div>
+        {% endfor %}
+    </div>
     </div>
 
     <div class="pagination">
@@ -87,4 +123,25 @@
             </span>
         </div>
     </div>
+
+    <script>
+        $(document).ready(function () {
+            // 当部门的选择项改变时，更新班组的选择项
+            $('#id_department').change(function () {
+                var department = $(this).val();
+                if (department === '业务运营与IT支撑中心') {
+                    // 如果选择了业务运营与IT支撑中心，只显示数据支撑班和业务稽核班
+                    $('#id_team').html(
+                        '<option value="数据支撑班">数据支撑班</option>' +
+                        '<option value="业务稽核班">业务稽核班</option>'
+                    );
+                } else {
+                    // 其他情况，清空班组选择
+                    $('#id_team').empty();
+                }
+            });
+        });
+
+    </script>
+
 {% endblock content %}
