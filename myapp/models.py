@@ -10,6 +10,7 @@ class Mission(models.Model):
     body = models.TextField()
     created = models.DateTimeField(default=timezone.now())
     accept_date = models.DateTimeField(auto_now=True)
+    image = models.ImageField(upload_to='mission_images/', blank=True, null=True)
 
 
     class Meta:

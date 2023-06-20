@@ -1,3 +1,4 @@
+from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
 from userprofile.forms import DepartmentTeamForm
 from .forms import MissionForm
@@ -6,6 +7,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from .models import Mission
 from django.core.paginator import Paginator
+from django.conf import settings
 import markdown
 # 视图函数
 from django.contrib.auth.decorators import login_required
@@ -71,21 +73,30 @@ def mission_detail(request, id):
 
 @login_required(login_url='/userprofile/login')
 def mission_create(request):
-   # 判断用户是否提交数据
-   if request.method == "POST":
-       mission_post_form = MissionForm(data=request.POST)
-       if mission_post_form.is_valid():
-           new_mission = mission_post_form.save(commit=False)
-           new_mission.mission_taker = User.objects.get(id=request.user.id)
-           new_mission.save()
-           return redirect('myapp:mission_list')
-       else:
-           return HttpResponse("表单内容有误,请重新填写")
+    if request.method == "POST":
+        mission_post_form = MissionForm(request.POST, request.FILES)
+        if mission_post_form.is_valid():
+            new_mission = mission_post_form.save(commit=False)
+            new_mission.mission_taker = User.objects.get(id=request.user.id)
 
-   else:
-       mission_post_form = MissionForm()
-       context = {'mission_post_form': mission_post_form}
-       return render(request, 'Mission/create.html', context)
+            # 处理图片上传
+            if 'image' in request.FILES:
+                image = request.FILES['image']
+                fs = FileSystemStorage(location=settings.MEDIA_ROOT)
+                filename = fs.save(image.name, image)
+                new_mission.image = fs.url(filename)
+
+            # 重新保存MissionForm实例
+            new_mission.save()
+            mission_post_form.save()
+
+            return redirect('myapp:mission_list')
+        else:
+            return HttpResponse("表单内容有误，请重新填写")
+    else:
+        mission_post_form = MissionForm()
+        context = {'mission_post_form': mission_post_form}
+        return render(request, 'Mission/create.html', context)
 
 
 

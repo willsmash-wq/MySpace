@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block title %}
     Mission
 {% endblock title %}
+
 {% block content %}
     <div class="container">
         <div class="row">
             <div class="col-md-9">
                 <h1 class="mt-4">标题：{{ mission.title }}</h1>
+
                 <div class="card mb-4">
                     <div class="card-body">
                         <div class="alert alert-success">
@@ -24,6 +27,9 @@
                         </div>
                         <div class="mt-4">
                             <p>内容：{{ mission.body|safe }}</p>
+                            {% if mission.image %}
+                                <img src="{{ mission.image.url }}" class="img-fluid" alt="Mission Image">
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -60,7 +66,7 @@
             var r = confirm("确定编辑吗？");
             if (r == true && ("{{ user.username }}" == "{{ mission.mission_taker }}" || "{{ user.username }}" == "root")) {
                 window.location = '{% url "myapp:mission_update" mission.id %}';
-           } else if (r == false) {
+            } else if (r == false) {
                 window.alert("取消编辑");
             } else {
                 window.alert("这不是你的文章，你无权编辑");
