@@ -37,8 +37,7 @@ urlpatterns = [
     path('captcha/', include('captcha.urls')),  # 图片验证码 路由
     path('refresh_captcha/', views.refresh_captcha),  # 刷新验证码，ajax
     path('test/', IndexView.as_view()),  # get与post请求路径
-    path('ckeditor/', include('ckeditor_uploader.urls')),
-    path('summernote/', include('django_summernote.urls')),
+    path("ckeditor5/", include('django_ckeditor_5.urls'), name="ck_editor_5_upload_file"),
     path('media/<path:path>', serve, {'document_root': settings.MEDIA_ROOT}),  # 用于上传图片文件，也可以上传其他文件word,ppt等。
     path('static/<path:path>', serve, {'document_root': settings.STATIC_ROOT}),  # 用于加载静态文件
 

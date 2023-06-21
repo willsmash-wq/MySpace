@@ -1,13 +1,13 @@
 from django.contrib import admin
-
-# Register your models here.
-from django.contrib import admin
-#导入ArticlePost
 from .models import Mission
-from django_summernote.admin import SummernoteModelAdmin
+from .forms import MissionForm
 
-class MissionAdmin(SummernoteModelAdmin):
-    summernote_fields = ('content',)
+class MissionAdmin(admin.ModelAdmin):
+    form = MissionForm
+    list_display = ('title', 'mission_taker', 'created', 'total_views')
+    list_filter = ('mission_taker', 'created')
+    search_fields = ('title', 'mission_taker__username')
+    date_hierarchy = 'created'
+    readonly_fields = ('accept_date',)
 
 admin.site.register(Mission, MissionAdmin)
-# 将ArticlePost注册到admin中

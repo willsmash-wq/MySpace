@@ -95,7 +95,7 @@ def mission_create(request):
             return HttpResponse("表单内容有误，请重新填写")
     else:
         mission_post_form = MissionForm()
-        context = {'mission_post_form': mission_post_form}
+        context = {'form': mission_post_form}
         return render(request, 'Mission/create.html', context)
 
 

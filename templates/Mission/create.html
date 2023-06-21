@@ -6,30 +6,21 @@
 {% endblock title %}
 
 {% block content %}
-<div class="container">
-    <div class="col-12">
-        <br>
-        <form method="post" action="." enctype="multipart/form-data">
-            {% csrf_token %}
-            <div class="form-group">
-                <label for="title">Title</label>
-                <div class="form-group">
-                    <input type="text" class="form-control" id="title" name="title">
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="body">Body</label>
-                <div class="form-group">
-                    <textarea class="form-control" id="body" name="body"></textarea>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="image">Image</label>
-                <input type="file" class="form-control-file" id="image" name="image">
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
+    <div class="container">
+        <div class="col-12">
+            <br>
+            <form method="post" action="." enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.media }}
+                {% for field in form %}
+                    <div class="form-group">
+                        <div><label for="{{ field.id_for_label }}" class="text-dark">{{ field.label }}: </label></div>
+                        {{ field }}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
     </div>
-</div>
 
 {% endblock content %}
