@@ -101,6 +101,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 SILENCED_SYSTEM_CHECKS = ['captcha.recaptcha_test_key_error']
 
+CKEDITOR_5_FILE_STORAGE = "myapp.storage.CustomStorage"
+
 customColorPalette = [
     {"color": "hsl(4, 90%, 58%)", "label": "Red"},
     {"color": "hsl(340, 82%, 52%)", "label": "Pink"},
