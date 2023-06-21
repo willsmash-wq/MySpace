@@ -3,7 +3,6 @@ from .models import Mission
 from django_ckeditor_5.widgets import CKEditor5Widget
 
 class MissionForm(forms.ModelForm):
-    image = forms.ImageField(required=False)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -13,7 +12,7 @@ class MissionForm(forms.ModelForm):
 
     class Meta:
         model = Mission
-        fields = ('title', 'body', 'image')
+        fields = ('title', 'body')
         widgets = {
             'body': CKEditor5Widget(
                 attrs={"class": "django_ckeditor_5"}, config_name="extends"

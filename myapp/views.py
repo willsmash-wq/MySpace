@@ -79,13 +79,6 @@ def mission_create(request):
             new_mission = mission_post_form.save(commit=False)
             new_mission.mission_taker = User.objects.get(id=request.user.id)
 
-            # 处理图片上传
-            if 'image' in request.FILES:
-                image = request.FILES['image']
-                fs = FileSystemStorage(location=settings.MEDIA_ROOT)
-                filename = fs.save(image.name, image)
-                new_mission.image = fs.url(filename)
-
             # 重新保存MissionForm实例
             new_mission.save()
             mission_post_form.save()
