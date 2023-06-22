@@ -44,10 +44,10 @@
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item">
-                            <a href="{% url 'myapp:mission_list' %}?order=newest">发布时间排序</a>
+                            <a href="{% url 'myapp:mission_list' %}?order=newest{% if selected_category %}&category={{ selected_category }}{% endif %}">发布时间排序</a>
                         </li>
                         <li class="breadcrumb-item">
-                            <a href="{% url 'myapp:mission_list' %}?order=total_views">浏览量排序</a>
+                            <a href="{% url 'myapp:mission_list' %}?order=total_views{% if selected_category %}&category={{ selected_category }}{% endif %}">浏览量排序</a>
                         </li>
                     </ol>
                 </nav>
@@ -120,6 +120,10 @@
                     </div>
                     <div class="card-footer d-flex align-items-center">
                         <a href="{% url 'myapp:mission_detail' mission.id %}" class="btn btn-primary mr-auto">阅读</a>
+                        <div class="text-muted small rounded p-2">
+                            <span class="font-weight-bold">文章类别:</span>
+                            <span class="ml-1">{{ mission.article_type }}</span>
+                        </div>
                         <div class="text-muted small rounded p-2">
                             <span class="font-weight-bold">创建时间:</span>
                             <span class="ml-1">{{ mission.created }}</span>

@@ -5,13 +5,58 @@
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=San+Francisco&display=swap" rel="stylesheet">
+
+    <style>
+        /* 在这里写你的 CSS 代码 */
+        body {
+            font-family: 'San Francisco', sans-serif;
+        }
+
+        .button {
+            font-family: 'San Francisco', sans-serif;
+            font-size: 14px;
+            padding: 10px 20px;
+            border-radius: 12px;
+            border: none;
+            color: #fff;
+            background: #007bff;
+            transition: background 0.3s ease;
+        }
+
+        .button:hover {
+            background: #0056b3;
+        }
+
+        .button:active {
+            background: #004282;
+        }
+
+        .breadcrumb {
+            background: none;
+            margin-bottom: 0;
+        }
+
+        .breadcrumb-item {
+            font-family: 'San Francisco', sans-serif;
+            font-size: 14px;
+        }
+
+        .breadcrumb-item a {
+            color: #007bff;
+        }
+
+        .breadcrumb-item.active {
+            color: #6c757d;
+        }
+    </style>
 </head>
 <body>
-    {% include 'header.html' %}
-    {% block content %}{% endblock content %}
-    {% include 'footer.html' %}
-    <script src="{% static 'jquery/jquery-3.7.0.js' %}"></script>
-    <script src="{% static 'popper/popper-1.14.4.js' %}"></script>
-    <script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+{% include 'header.html' %}
+{% block content %}{% endblock content %}
+{% include 'footer.html' %}
+<script src="{% static 'jquery/jquery-3.7.0.js' %}"></script>
+<script src="{% static 'popper/popper-1.14.4.js' %}"></script>
+<script src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
 </body>
 </html>
