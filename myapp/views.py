@@ -18,7 +18,7 @@ def mission_list(request):
     # 检查用户的部门和班组信息
     department = request.user.profile.department
     team = request.user.profile.team
-    # 如果部门或班组是虚拟的，那么将show_guide设为True
+    # 如果部门或班组是虚拟的，那么将 show_guide 设为 True
     if department == '虚拟部门' or team == '虚拟班组':
         show_guide = True
 
@@ -30,15 +30,13 @@ def mission_list(request):
     else:
         form = DepartmentTeamForm(instance=request.user.profile)
 
-    if request.GET.get('order') == 'total_views':
+    order = request.GET.get('order')
+    if order == 'total_views':
         mission_list = Mission.objects.all().order_by('-total_views')
-        order = 'total_views'
-    elif request.GET.get('order') == 'newest':
+    elif order == 'newest':
         mission_list = Mission.objects.all().order_by('-created')
-        order = 'newest'
     else:
         mission_list = Mission.objects.all()
-        order = 'normal'
 
     search_keyword = request.GET.get('search')
     if search_keyword:
@@ -46,11 +44,21 @@ def mission_list(request):
             Q(title__icontains=search_keyword) | Q(body__icontains=search_keyword)
         ).distinct()
 
+    category = request.GET.get('category')
+    if category:
+        mission_list = mission_list.filter(article_type=category)
+
     paginator = Paginator(mission_list, 9)
     page = request.GET.get('page')
     missions = paginator.get_page(page)
 
-    context = {'missions': missions, 'order': order, 'show_guide': show_guide, 'form': form}
+    context = {
+        'missions': missions,
+        'order': order,
+        'show_guide': show_guide,
+        'form': form,
+        'selected_category': category,
+    }
     return render(request, 'mission/list.html', context)
 
 # 文章详情

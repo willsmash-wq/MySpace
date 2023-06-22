@@ -1,17 +1,16 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block title %}
     Mission
 {% endblock title %}
+
 {% block content %}
-    <!-- 提醒框 -->
     {% if show_guide %}
-        <div class="alert alert-warning" role="alert" id="guide-alert"
-             style="border-radius: 20px; box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); background-color: rgba(232, 240, 254, 0.8); color: #1967d2; padding: 20px;">
-            <p style="margin-bottom: 20px;">请完善你的部门和班组信息</p>
-            <!-- 添加一个按钮，点击这个按钮可以打开模态对话框 -->
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#departmentTeamModal"
-                    style="border-radius: 50px; background: linear-gradient(45deg, rgba(30, 136, 229, 0.8) 0%, rgba(38, 198, 218, 0.8) 100%); box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); transition: all 0.3s; padding: 10px 20px;">
+        <!-- 提醒框 -->
+        <div class="alert alert-warning" role="alert" id="guide-alert">
+            <p>请完善你的部门和班组信息</p>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#departmentTeamModal">
                 选择部门和班组
             </button>
         </div>
@@ -21,50 +20,91 @@
     <div class="modal fade" id="departmentTeamModal" tabindex="-1" role="dialog"
          aria-labelledby="departmentTeamModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
-            <div class="modal-content"
-                 style="border-radius: 20px; box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); background-color: rgba(255, 255, 255, 0.4); padding: 20px;">
+            <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="departmentTeamModalLabel" style="color: #1967d2;">选择部门和班组</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="outline: none;">
-                        <span aria-hidden="true" style="color: #1967d2;">&times;</span>
+                    <h5 class="modal-title" id="departmentTeamModalLabel">选择部门和班组</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <!-- 部门和班组的表单 -->
-                    <form method="POST" style="margin-top: 20px;">
+                    <form method="POST">
                         {% csrf_token %}
                         {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary"
-                                style="border-radius: 50px; background: linear-gradient(45deg, rgba(30, 136, 229, 0.8) 0%, rgba(38, 198, 218, 0.8) 100%); box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1); transition: all 0.3s; padding: 10px 20px; margin-top: 20px;">
-                            提交
-                        </button>
+                        <button type="submit" class="btn btn-primary">提交</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <div class="d-flex justify-content-between">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'myapp:mission_list' %}?order=newest">发布时间排序</a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'myapp:mission_list' %}?order=total_views">浏览量排序</a>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-outline-primary" data-toggle="modal" data-target="#categoryModal">
+                    文章类别
+                </button>
+            </div>
+        </div>
+    </div>
 
+    <!-- 文章类别选择模态对话框 -->
+    <div class="modal fade" id="categoryModal" tabindex="-1" role="dialog" aria-labelledby="categoryModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="categoryModalLabel">选择文章类别</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <ul class="list-group">
+                        <li class="list-group-item"><a href="{% url 'myapp:mission_list' %}?category=销售支撑网类"
+                                                       {% if selected_category == '销售支撑网类' %}class="active"{% endif %}>销售支撑网类</a>
+                        </li>
+                        <li class="list-group-item"><a href="{% url 'myapp:mission_list' %}?category=认领规则类"
+                                                       {% if selected_category == '认领规则类' %}class="active"{% endif %}>认领规则类</a>
+                        </li>
+                        <li class="list-group-item"><a href="{% url 'myapp:mission_list' %}?category=每周实例新建类"
+                                                       {% if selected_category == '每周实例新建类' %}class="active"{% endif %}>每周实例新建类</a>
+                        </li>
+                        <li class="list-group-item"><a href="{% url 'myapp:mission_list' %}?category=月度稽核类"
+                                                       {% if selected_category == '月度稽核类' %}class="active"{% endif %}>月度稽核类</a>
+                        </li>
+                        <li class="list-group-item"><a href="{% url 'myapp:mission_list' %}?category=代码类"
+                                                       {% if selected_category == '代码类' %}class="active"{% endif %}>代码类</a>
+                        </li>
+                        <li class="list-group-item"><a href="{% url 'myapp:mission_list' %}?category=虚拟类"
+                                                       {% if selected_category == '虚拟类' %}class="active"{% endif %}>虚拟类</a>
+                        </li>
+                        <!-- 添加其他类别的链接 -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a href="{% url 'myapp:mission_list' %}?order=newest">
-                    发布时间排序
-                </a>
-            </li>
-            <li class="breadcrumb-item">
-                <a href="{% url 'myapp:mission_list' %}?order=total_views">
-                    浏览量排序
-                </a>
-            </li>
-        </ol>
-    </nav>
     <div class="row mt-2">
         <div class="col-12 mb-4">
             <form class="form-inline" method="GET" action="{% url 'myapp:mission_list' %}">
-                <input class="form-control mr-sm-2" type="search" placeholder="按照关键字进行搜索"
-                       aria-label="Search" name="search">
+                <input class="form-control mr-sm-2" type="search" placeholder="按照关键字进行搜索" aria-label="Search"
+                       name="search" value="{{ request.GET.search }}">
                 <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">搜索</button>
             </form>
         </div>
@@ -79,8 +119,7 @@
                         <p class="card-text">{{ mission.body|slice:'100' }}...</p>
                     </div>
                     <div class="card-footer d-flex align-items-center">
-                        <a href="{% url 'myapp:mission_detail' mission.id %}"
-                           class="btn btn-primary mr-auto">阅读</a>
+                        <a href="{% url 'myapp:mission_detail' mission.id %}" class="btn btn-primary mr-auto">阅读</a>
                         <div class="text-muted small rounded p-2">
                             <span class="font-weight-bold">创建时间:</span>
                             <span class="ml-1">{{ mission.created }}</span>
@@ -94,31 +133,23 @@
             </div>
         {% endfor %}
     </div>
-    </div>
 
     <div class="pagination">
         <div class="m-auto">
             <span class="step-links">
                 {% if missions.has_previous %}
-                    <a href="?page=1" class="btn btn-success">
-                        &laquo; 1
-                    </a>
+                    <a href="?page=1" class="btn btn-success">&laquo; 1</a>
                     <span>...</span>
-                    <a href="?page={{ missions.previous_page_number }}" class="btn btn-secondary">
-                        {{ missions.previous_page_number }}
-                    </a>
+                    <a href="?page={{ missions.previous_page_number }}"
+                       class="btn btn-secondary">{{ missions.previous_page_number }}</a>
                 {% endif %}
-                <span class="current btn btn-danger btn-lg">
-                    {{ missions.number }}
-                </span>
+                <span class="current btn btn-danger btn-lg">{{ missions.number }}</span>
                 {% if missions.has_next %}
-                    <a href="?page={{ missions.next_page_number }}" class="btn btn-secondary">
-                        {{ missions.next_page_number }}
-                    </a>
+                    <a href="?page={{ missions.next_page_number }}"
+                       class="btn btn-secondary">{{ missions.next_page_number }}</a>
                     <span>...</span>
-                    <a href="?page={{ missions.paginator.num_pages }}" class="btn btn-success">
-                        {{ missions.paginator.num_pages }} &raquo;
-                    </a>
+                    <a href="?page={{ missions.paginator.num_pages }}"
+                       class="btn btn-success">{{ missions.paginator.num_pages }} &raquo;</a>
                 {% endif %}
             </span>
         </div>
@@ -130,18 +161,14 @@
             $('#id_department').change(function () {
                 var department = $(this).val();
                 if (department === '业务运营与IT支撑中心') {
-                    // 如果选择了业务运营与IT支撑中心，只显示数据支撑班和业务稽核班
                     $('#id_team').html(
                         '<option value="数据支撑班">数据支撑班</option>' +
                         '<option value="业务稽核班">业务稽核班</option>'
                     );
                 } else {
-                    // 其他情况，清空班组选择
                     $('#id_team').empty();
                 }
             });
         });
-
     </script>
-
 {% endblock content %}
