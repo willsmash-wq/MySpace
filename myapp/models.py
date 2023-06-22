@@ -13,7 +13,15 @@ class Mission(models.Model):
     created = models.DateTimeField(default=timezone.now())
     accept_date = models.DateTimeField(auto_now=True)
 
-
+    ARTICLE_TYPE_CHOICES = (
+        ('销售支撑网类', '销售支撑网类'),
+        ('认领规则类', '认领规则类'),
+        ('每周实例新建类', '每周实例新建类'),
+        ('月度稽核类', '月度稽核类'),
+        ('代码类', '代码类'),
+        ('虚拟类', '虚拟类'),
+    )
+    article_type = models.CharField(max_length=20, choices=ARTICLE_TYPE_CHOICES, default='虚拟类')
 
     class Meta:
         ordering = ('-created',)
