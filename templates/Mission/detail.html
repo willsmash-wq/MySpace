@@ -6,41 +6,73 @@
 {% endblock title %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-md-9">
-                <h1 class="mt-4">标题：{{ mission.title }}</h1>
+    <style>
+        body {
+            background-color: #f4f4f4;
+        }
 
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <div class="alert alert-success">
-                            任务发布者: {{ mission.mission_taker }}
-                            {% if user == mission.mission_taker %}
-                                <br>
-                                这是你的文章，除管理员以外，只有你能够删除或者编辑你的文章
-                            {% else %}
-                                <br>
-                                这不是你的文章，如果你不是管理员，那你将不能够对文章进行删除或者编辑操作
-                            {% endif %}
-                            <br>
-                            浏览量： {{ mission.total_views }}
-                        </div>
-                        <div class="mt-4">
-                            <p>内容：{{ mission.body|safe }}</p>
-                            {% if mission.image %}
-                                <img src="{{ mission.image.url }}" class="img-fluid" alt="Mission Image">
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-                {% if user == mission.mission_taker or user.is_superuser %}
-                    <div class="my-4">
-                        <button type="button" class="btn btn-primary mr-2" onclick="confirm_delete()">删除</button>
-                        <button type="button" class="btn btn-primary" onclick="confirm_edit()">编辑</button>
-                    </div>
+        .mission-header {
+            margin: 20px 0;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .mission-body {
+            margin: 20px 0;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .mission-body img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .mission-footer {
+            margin: 20px 0;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment-box {
+            margin: 20px 0;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="mission-header">
+                <h2 class="mt-4">标题: {{ mission.title }}</h2>
+                <hr>
+                <p>
+                    发布者: {{ mission.mission_taker.username }} |
+                    浏览量: {{ mission.total_views }}
+                </p>
+            </div>
+
+            <div class="mission-body">
+                <p>内容: {{ mission.body|safe }}</p>
+                {% if mission.image %}
+                    <img src="{{ mission.image.url }}" class="img-fluid" alt="Mission Image">
                 {% endif %}
             </div>
-            <div class="col-md-3 mt-4">
+
+            {% if user == mission.mission_taker or user.is_superuser %}
+                <div class="mission-footer">
+                    <button type="button" class="btn btn-danger mr-2" onclick="confirm_delete()">删除</button>
+                    <button type="button" class="btn btn-warning" onclick="confirm_edit()">编辑</button>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="col-md-4">
+            <div class="mission-sidebar card mt-4 p-4">
                 <h4><strong>Contents</strong></h4>
                 <hr>
                 <div>
@@ -50,35 +82,31 @@
         </div>
     </div>
 
-    <div class="card mb-4">
-        <div class="card-header bg-info text-white">
-            <h2 class="mb-0">评论</h2>
-        </div>
-        <div class="card-body">
-            {% for comment in comments %}
-                <div class="comment my-4 border-bottom pb-2">
-                    <div class="comment-body">
-                        <h5 class="text-secondary">评论内容:</h5>
-                        <p class="font-weight-light">{{ comment.body }}</p>
-                    </div>
-                    <div class="comment-meta d-flex justify-content-between">
-                        <div>
-                            <span class="comment-author text-secondary"><strong>评论者: {{ comment.user.username }}</strong></span><br>
-                            <span class="comment-date text-muted small">评论时间: {{ comment.created }}</span>
-                        </div>
-                        {% if user == comment.user or user == mission.mission_taker %}
-                            <div>
-                                <button type="button" class="btn btn-sm btn-danger" data-comment-id="{{ comment.id }}"
-                                        onclick="confirm_comment_delete(this)">删除评论
-                                </button>
-                            </div>
-                        {% endif %}
-                    </div>
+    <div class="comment-box card mb-4 p-4">
+        <h2 class="mb-0">评论</h2>
+        <hr>
+        {% for comment in comments %}
+            <div class="comment mb-4">
+                <div class="comment-body">
+                    <h5>{{ comment.body }}</h5>
                 </div>
-            {% empty %}
-                <p class="text-muted">没有评论。</p>
-            {% endfor %}
-        </div>
+                <div class="comment-meta d-flex justify-content-between">
+                    <div>
+                        <span class="comment-author"><strong>评论者: {{ comment.user.username }}</strong></span><br>
+                        <span class="comment-date text-muted small">评论时间: {{ comment.created }}</span>
+                    </div>
+                    {% if user == comment.user or user == mission.mission_taker %}
+                        <div>
+                            <button type="button" class="btn btn-sm btn-danger" data-comment-id="{{ comment.id }}"
+                                    onclick="confirm_comment_delete(this)">删除评论
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">暂时没有评论.</p>
+        {% endfor %}
     </div>
 
 
