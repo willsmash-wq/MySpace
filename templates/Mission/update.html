@@ -1,27 +1,26 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block title %}
     Edit
 {% endblock title %}
+
 {% block content %}
     <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <br>
-                <form method="post" action=".">
-                    {% csrf_token %}
+        <div class="col-12">
+            <br>
+            <form method="post" action="." enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.media }}
+                {% for field in form %}
                     <div class="form-group">
-                        <label for="title">Title</label>
-                        <input type="text" class="form-control" id="title" name="title" value="{{ mission.title }}">
-
+                        <div><label for="{{ field.id_for_label }}" class="text-dark">{{ field.label }}: </label></div>
+                        {{ field }}
                     </div>
-                    <div class="form-group">
-                        <label for="body">Body</label>
-                        <textarea type="text" class="form-control" id="body" name="body" rows="12">{{ mission.body }}</textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">submit</button>
-                </form>
-            </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
         </div>
     </div>
+
 {% endblock content %}

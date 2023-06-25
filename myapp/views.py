@@ -131,18 +131,16 @@ def mission_delete(request, id):
    return redirect('myapp:mission_list')
 
 def mission_update(request, id):
-   mission = Mission.objects.get(id=id)
-   if request.method =="POST":
-       Mission_post_form = MissionForm(data=request.POST)
-       if Mission_post_form.is_valid():
-           mission.title = request.POST['title']
-           mission.body = request.POST['body']
-           mission.save()
-           return redirect("myapp:mission_detail", id=id)
-       else:
-           return HttpResponse("表单内容有误,请重新填写")
-   else:
-       Mission_post_form = MissionForm()
-       context = { 'mission': mission, 'Mission_post_form': Mission_post_form}
-       return render(request, 'Mission/update.html', context)
+    mission = Mission.objects.get(id=id)
+    if request.method =="POST":
+        mission_form = MissionForm(request.POST, instance=mission)
+        if mission_form.is_valid():
+            mission_form.save()
+            return redirect("myapp:mission_detail", id=id)
+        else:
+            return HttpResponse("表单内容有误,请重新填写")
+    else:
+        mission_form = MissionForm(instance=mission)
+        context = {'mission': mission, 'form': mission_form}
+        return render(request, 'Mission/update.html', context)
 
