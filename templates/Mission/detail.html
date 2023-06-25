@@ -33,7 +33,7 @@
                         </div>
                     </div>
                 </div>
-                {% if user.username == mission.mission_taker or user.username == 'root' %}
+                {% if user == mission.mission_taker or user.is_superuser %}
                     <div class="my-4">
                         <button type="button" class="btn btn-primary mr-2" onclick="confirm_delete()">删除</button>
                         <button type="button" class="btn btn-primary" onclick="confirm_edit()">编辑</button>
@@ -66,6 +66,13 @@
                             <span class="comment-author text-secondary"><strong>评论者: {{ comment.user.username }}</strong></span><br>
                             <span class="comment-date text-muted small">评论时间: {{ comment.created }}</span>
                         </div>
+                        {% if user == comment.user or user == mission.mission_taker %}
+                            <div>
+                                <button type="button" class="btn btn-sm btn-danger" data-comment-id="{{ comment.id }}"
+                                        onclick="confirm_comment_delete(this)">删除评论
+                                </button>
+                            </div>
+                        {% endif %}
                     </div>
                 </div>
             {% empty %}
@@ -93,9 +100,23 @@
 
 
     <script>
+        function confirm_comment_delete(button) {
+            var commentId = button.getAttribute('data-comment-id');
+            var r = confirm("确定删除这条评论吗？");
+            if (r == true) {
+                window.location = '/myapp/comment_delete/' + commentId + '/';
+            } else {
+                window.alert("取消删除");
+            }
+        }
+
+
+        var isSuperUser = {{ user.is_superuser|lower }};
+        var isMissionTaker = ("{{ user.username }}" == "{{ mission.mission_taker }}");
+
         function confirm_delete() {
             var r = confirm("确定删除吗？");
-            if (r == true && ("{{ user.username }}" == "{{ mission.mission_taker }}" || "{{ user.username }}" == "root")) {
+            if (r == true && (isMissionTaker || isSuperUser)) {
                 window.location = '{% url "myapp:mission_delete" mission.id %}';
             } else if (r == false) {
                 window.alert("取消删除");
@@ -106,7 +127,7 @@
 
         function confirm_edit() {
             var r = confirm("确定编辑吗？");
-            if (r == true && ("{{ user.username }}" == "{{ mission.mission_taker }}" || "{{ user.username }}" == "root")) {
+            if (r == true && (isMissionTaker || isSuperUser)) {
                 window.location = '{% url "myapp:mission_update" mission.id %}';
             } else if (r == false) {
                 window.alert("取消编辑");

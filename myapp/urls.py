@@ -9,4 +9,5 @@ urlpatterns = [
     path('mission_create/', views.mission_create, name="mission_create"),
     path('mission_delete/<int:id>', views.mission_delete, name="mission_delete"),
     path('mission_update/<int:id>/', views.mission_update, name="mission_update"),
+    path('comment_delete/<int:id>/', views.comment_delete, name="comment_delete"),
 ]

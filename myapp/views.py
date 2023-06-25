@@ -5,7 +5,7 @@ from .forms import MissionForm, CommentForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
-from .models import Mission
+from .models import Mission, Comment
 from django.core.paginator import Paginator
 from django.conf import settings
 import markdown
@@ -111,6 +111,17 @@ def mission_create(request):
         mission_post_form = MissionForm()
         context = {'form': mission_post_form}
         return render(request, 'Mission/create.html', context)
+
+
+@login_required
+def comment_delete(request, id):
+    comment = Comment.objects.get(id=id)
+    mission = comment.mission
+    if request.user == comment.user or request.user == mission.mission_taker:
+        comment.delete()
+    else:
+        return HttpResponse('您无权删除此评论')
+    return redirect('myapp:mission_detail', id=mission.id)
 
 
 
