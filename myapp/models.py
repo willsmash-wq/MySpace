@@ -20,6 +20,7 @@ class Mission(models.Model):
         ('月度稽核类', '月度稽核类'),
         ('代码类', '代码类'),
         ('虚拟类', '虚拟类'),
+        ('问答类', '问答类'),
     )
     article_type = models.CharField(max_length=20, choices=ARTICLE_TYPE_CHOICES, default='虚拟类')
 
