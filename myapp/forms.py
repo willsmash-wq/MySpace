@@ -1,5 +1,5 @@
 from django import forms
-from .models import Mission
+from .models import Mission, Comment
 from django_ckeditor_5.widgets import CKEditor5Widget
 
 class MissionForm(forms.ModelForm):
@@ -16,3 +16,7 @@ class MissionForm(forms.ModelForm):
             'body': CKEditor5Widget(attrs={"class": "django_ckeditor_5"}, config_name="extends")
         }
 
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('body',)

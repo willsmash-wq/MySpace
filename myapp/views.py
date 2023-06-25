@@ -1,7 +1,7 @@
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q
 from userprofile.forms import DepartmentTeamForm
-from .forms import MissionForm
+from .forms import MissionForm, CommentForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -64,6 +64,18 @@ def mission_list(request):
 # 文章详情
 def mission_detail(request, id):
     mission = Mission.objects.get(id=id)
+    new_comment = None
+
+    if request.method == 'POST':
+        comment_form = CommentForm(data=request.POST)
+        if comment_form.is_valid():
+            new_comment = comment_form.save(commit=False)
+            new_comment.mission = mission
+            new_comment.user = request.user
+            new_comment.save()
+    else:
+        comment_form = CommentForm()
+
     mission.total_views += 1
     mission.save(update_fields=['total_views'])
     md = markdown.Markdown(
@@ -74,7 +86,8 @@ def mission_detail(request, id):
         ]
     )
     mission.body = md.convert(mission.body)
-    context = {'mission': mission, 'toc': md.toc}
+    context = {'mission': mission, 'toc': md.toc, 'comments': mission.comments.all(), 'new_comment': new_comment,
+               'comment_form': comment_form}
     return render(request, 'mission/detail.html', context)
 
 

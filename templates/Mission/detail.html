@@ -50,6 +50,48 @@
         </div>
     </div>
 
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h2 class="mb-0">评论</h2>
+        </div>
+        <div class="card-body">
+            {% for comment in comments %}
+                <div class="comment my-4 border-bottom pb-2">
+                    <div class="comment-body">
+                        <h5 class="text-secondary">评论内容:</h5>
+                        <p class="font-weight-light">{{ comment.body }}</p>
+                    </div>
+                    <div class="comment-meta d-flex justify-content-between">
+                        <div>
+                            <span class="comment-author text-secondary"><strong>评论者: {{ comment.user.username }}</strong></span><br>
+                            <span class="comment-date text-muted small">评论时间: {{ comment.created }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p class="text-muted">没有评论。</p>
+            {% endfor %}
+        </div>
+    </div>
+
+
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h2 class="mb-0">添加评论</h2>
+        </div>
+        <div class="card-body">
+            <form method="post" class="form-floating">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="body">在这里写下你的评论...</label>
+                    <textarea name="body" class="form-control" id="body" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">提交评论</button>
+            </form>
+        </div>
+    </div>
+
+
     <script>
         function confirm_delete() {
             var r = confirm("确定删除吗？");

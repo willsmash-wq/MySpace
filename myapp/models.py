@@ -29,3 +29,13 @@ class Mission(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class Comment(models.Model):
+    mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    body = models.TextField()
+    created = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ('-created',)
