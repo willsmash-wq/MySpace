@@ -98,28 +98,21 @@ def user_delete(request, id):
 @login_required(login_url='/userprofile/login/')
 def profile_edit(request, id):
     user = User.objects.get(id=id)
-    # user_id是OneToOneField自动生成的字段
     profile = Profile.objects.get(user_id=id)
 
     if request.method == 'POST':
-        # 验证修改数据者是否为本人
         if request.user != user:
             return HttpResponse("你没有权限修改次用户信息")
 
-        profile_form = ProfileForm(data=request.POST)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=profile)  # 注意这里添加了 request.FILES
         if profile_form.is_valid():
-            # 取得清洗后的合法数据
-            profile_cleaned_data = profile_form.cleaned_data
-            profile.phone = profile_cleaned_data['phone']
-            profile.bio = profile_cleaned_data['bio']
-            profile.save()
+            profile_form.save()
             return redirect("userprofile:edit", id=id)
-
         else:
             return HttpResponse("注册表单输入有误,请重新输入")
 
     elif request.method == "GET":
-        profile_form = ProfileForm()
+        profile_form = ProfileForm(instance=profile)  # 这里添加了 instance=profile，以便于显示原先的数据
         context = {'profile_form': profile_form, 'profile': profile, 'user': user}
         return render(request, 'userprofile/edit.html', context)
     else:

@@ -24,9 +24,11 @@ class UserRegisterForm(forms.ModelForm):
 
 
 class ProfileForm(forms.ModelForm):
+   avatar = forms.ImageField(widget=forms.FileInput)  # add this line
    class Meta:
       model = Profile
       fields = ('phone', 'avatar', 'bio', 'department', 'team')
+
 
 
 class DepartmentTeamForm(forms.ModelForm):
