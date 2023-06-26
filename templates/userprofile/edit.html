@@ -1,28 +1,56 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}
-User
+  User Profile
 {% endblock title %}
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <br>
-                <div class="col-md-4">Username {{ user.username }}</div>
-                <br>
-                <form method="post" action=".">
-                    {% csrf_token %}
-                    <div class="form-group col-md-4">
-                        <label for="phone">phone</label>
-                        <input type="text" class="form-control" id="phone" name="phone" value="{{ profile.phone }}">
-                    </div>
-                    <div class="form-group col-md-4">
-                        <label for="bio">bio</label>
-                        <textarea type="text" class="form-control" id="bio" name="bio" rows="12">{{ profile.bio }}</textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary">submit</button>
-                </form>
+<div class="container py-5">
+  <div class="row">
+    <div class="col-lg-8 mx-auto">
+      <div class="card shadow">
+        <div class="card-body">
+          <div class="text-center mb-4">
+            <h2 class="text-uppercase">用户资料</h2>
+            <p class="lead">在此更新你的用户信息</p>
+          </div>
+          <form method="post" action="." enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="username" class="form-label">用户名</label>
+              <input type="text" class="form-control" id="username" name="username" value="{{ user.username }}" readonly>
             </div>
+            <div class="mb-3">
+              <label for="phone" class="form-label">手机号码</label>
+              <input type="tel" class="form-control" id="phone" name="phone" value="{{ profile.phone }}">
+            </div>
+            <div class="mb-3">
+              <label for="bio" class="form-label">简介</label>
+              <textarea class="form-control" id="bio" name="bio" rows="4">{{ profile.bio }}</textarea>
+            </div>
+            <div class="mb-3">
+              <label for="avatar" class="form-label">头像</label>
+              <input type="file" class="form-control" id="avatar" name="avatar" accept="image/*">
+              {% if profile.avatar %}
+              <div class="mt-2">
+                <img src="{{ profile.avatar.url }}" id="avatarPreview" width="100" alt="Avatar Preview">
+              </div>
+              {% endif %}
+            </div>
+            <div class="mb-3">
+              <label for="department" class="form-label">部门</label>
+              <input type="text" class="form-control" id="department" name="department" value="{{ profile.department }}" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="team" class="form-label">班组</label>
+              <input type="text" class="form-control" id="team" name="team" value="{{ profile.team }}" readonly>
+            </div>
+            <div class="d-flex justify-content-end">
+              <button type="submit" class="btn btn-primary">更新资料</button>
+            </div>
+          </form>
         </div>
+      </div>
     </div>
+  </div>
+</div>
 {% endblock content %}
