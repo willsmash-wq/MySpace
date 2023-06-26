@@ -93,6 +93,9 @@
                         <li class="list-group-item"><a href="{% url 'myapp:mission_list' %}?category=虚拟类"
                                                        {% if selected_category == '虚拟类' %}class="active"{% endif %}>虚拟类</a>
                         </li>
+                        <li class="list-group-item"><a href="{% url 'myapp:mission_list' %}?category=代码类"
+                                                       {% if selected_category == '代码类' %}class="active"{% endif %}>代码类</a>
+                        </li>
                         <!-- 添加其他类别的链接 -->
                     </ul>
                 </div>
