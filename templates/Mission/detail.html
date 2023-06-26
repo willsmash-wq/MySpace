@@ -7,6 +7,42 @@
 
 {% block content %}
     <style>
+        @keyframes floatUp {
+            0% {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .mission-header, .mission-body, .mission-footer, .comment-box {
+            animation: floatUp 0.5s ease-out forwards;
+        }
+
+        .mission-header {
+            animation: floatUp 0.5s ease-out forwards;
+            animation-delay: 0s;
+        }
+
+        .mission-body {
+            animation: floatUp 0.5s ease-out forwards;
+            animation-delay: 0.2s;
+        }
+
+        .mission-footer {
+            animation: floatUp 0.5s ease-out forwards;
+            animation-delay: 0.4s;
+        }
+
+        .comment-box {
+            animation: floatUp 0.5s ease-out forwards;
+            animation-delay: 0.6s;
+        }
+
+
         body {
             background-color: #f4f4f4;
         }
@@ -45,87 +81,77 @@
         }
     </style>
     <div class="container">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="mission-header">
-                <h2 class="mt-4">标题: {{ mission.title }}</h2>
-                <hr>
-                <p>
-                    发布者: {{ mission.mission_taker.username }} |
-                    浏览量: {{ mission.total_views }}
-                </p>
-            </div>
-
-            <div class="mission-body">
-                <p>内容: {{ mission.body|safe }}</p>
-                {% if mission.image %}
-                    <img src="{{ mission.image.url }}" class="img-fluid" alt="Mission Image">
-                {% endif %}
-            </div>
-
-            {% if user == mission.mission_taker or user.is_superuser %}
-                <div class="mission-footer">
-                    <button type="button" class="btn btn-danger mr-2" onclick="confirm_delete()">删除</button>
-                    <button type="button" class="btn btn-warning" onclick="confirm_edit()">编辑</button>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="mission-header">
+                    <h2 class="mt-4">标题: {{ mission.title }}</h2>
+                    <hr>
+                    <p>
+                        发布者: {{ mission.mission_taker.username }} |
+                        浏览量: {{ mission.total_views }}
+                    </p>
                 </div>
-            {% endif %}
-        </div>
 
-        <div class="col-md-4">
-            <div class="mission-sidebar card mt-4 p-4">
-                <h4><strong>Contents</strong></h4>
-                <hr>
-                <div>
-                    {{ toc|safe }}
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="comment-box card mb-4 p-4">
-        <h2 class="mb-0">评论</h2>
-        <hr>
-        {% for comment in comments %}
-            <div class="comment mb-4">
-                <div class="comment-body">
-                    <h5>{{ comment.body }}</h5>
-                </div>
-                <div class="comment-meta d-flex justify-content-between">
-                    <div>
-                        <span class="comment-author"><strong>评论者: {{ comment.user.username }}</strong></span><br>
-                        <span class="comment-date text-muted small">评论时间: {{ comment.created }}</span>
-                    </div>
-                    {% if user == comment.user or user == mission.mission_taker %}
-                        <div>
-                            <button type="button" class="btn btn-sm btn-danger" data-comment-id="{{ comment.id }}"
-                                    onclick="confirm_comment_delete(this)">删除评论
-                            </button>
-                        </div>
+                <div class="mission-body">
+                    <p>内容: {{ mission.body|safe }}</p>
+                    {% if mission.image %}
+                        <img src="{{ mission.image.url }}" class="img-fluid" alt="Mission Image">
                     {% endif %}
                 </div>
-            </div>
-        {% empty %}
-            <p class="text-muted">暂时没有评论.</p>
-        {% endfor %}
-    </div>
 
+                {% if user == mission.mission_taker or user.is_superuser %}
+                    <div class="mission-footer">
+                        <button type="button" class="btn btn-danger mr-2" onclick="confirm_delete()">删除</button>
+                        <button type="button" class="btn btn-warning" onclick="confirm_edit()">编辑</button>
+                    </div>
+                {% endif %}
 
-    <div class="card mb-4">
-        <div class="card-header bg-info text-white">
-            <h2 class="mb-0">添加评论</h2>
-        </div>
-        <div class="card-body">
-            <form method="post" class="form-floating">
-                {% csrf_token %}
-                <div class="form-group">
-                    <label for="body">在这里写下你的评论...</label>
-                    <textarea name="body" class="form-control" id="body" rows="3" required></textarea>
+                <div class="comment-box card mb-4 p-4">
+                    <h2 class="mb-0">评论</h2>
+                    <hr>
+                    {% for comment in comments %}
+                        <div class="comment mb-4">
+                            <div class="comment-body">
+                                <h5>{{ comment.body }}</h5>
+                            </div>
+                            <div class="comment-meta d-flex justify-content-between">
+                                <div>
+                                    <span class="comment-author"><strong>评论者: {{ comment.user.username }}</strong></span><br>
+                                    <span class="comment-date text-muted small">评论时间: {{ comment.created }}</span>
+                                </div>
+                                {% if user == comment.user or user == mission.mission_taker %}
+                                    <div>
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                                data-comment-id="{{ comment.id }}"
+                                                onclick="confirm_comment_delete(this)">删除评论
+                                        </button>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% empty %}
+                        <p class="text-muted">暂时没有评论.</p>
+                    {% endfor %}
                 </div>
-                <button type="submit" class="btn btn-primary mt-3">提交评论</button>
-            </form>
+
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h2 class="mb-0">添加评论</h2>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" class="form-floating">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="body">在这里写下你的评论...</label>
+                                <textarea name="body" class="form-control" id="body" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary mt-3">提交评论</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
 
     <script>
         function confirm_comment_delete(button) {
@@ -137,7 +163,6 @@
                 window.alert("取消删除");
             }
         }
-
 
         var isSuperUser = {{ user.is_superuser|lower }};
         var isMissionTaker = ("{{ user.username }}" == "{{ mission.mission_taker }}");
