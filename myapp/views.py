@@ -4,8 +4,8 @@ from userprofile.forms import DepartmentTeamForm
 from .forms import MissionForm, CommentForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from .models import Mission, Comment
+from django.http import HttpResponse, JsonResponse
+from .models import Mission, Comment, MissionRating
 from django.core.paginator import Paginator
 from django.conf import settings
 import markdown
@@ -143,4 +143,29 @@ def mission_update(request, id):
         mission_form = MissionForm(instance=mission)
         context = {'mission': mission, 'form': mission_form}
         return render(request, 'Mission/update.html', context)
+
+from django.http import JsonResponse
+import json
+
+@login_required
+def mission_rating(request, id):
+    if request.method == 'POST':
+        # 解析JSON数据
+        data = json.loads(request.body)
+        rating = data.get('rating', 0)
+        mission = Mission.objects.get(id=id)
+        user = request.user
+
+        # 检查用户是否已经对该任务评分过
+        mission_rating, created = MissionRating.objects.get_or_create(mission=mission, user=user)
+        if not created:
+            mission_rating.rating = rating
+            mission_rating.save()
+        else:
+            mission.rating_users.add(user, through_defaults={'rating': rating})
+
+        return JsonResponse({'message': '评分保存成功'})
+    else:
+        return JsonResponse({'message': '无效的请求方法'}, status=400)
+
 

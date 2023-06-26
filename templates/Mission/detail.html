@@ -79,6 +79,30 @@
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+
+        .rating-stars {
+            direction: rtl; /* 右到左的方向，使得星星从左到右被填充 */
+            display: inline-block;
+        }
+
+        .rating-input {
+            display: none;
+        }
+
+        .rating-star {
+            padding: 5px;
+            font-size: 24px;
+            color: gray;
+            cursor: pointer;
+            transition: color .2s ease-in-out;
+        }
+
+        /* 当用户鼠标悬停或选择星星时，改变颜色 */
+        .rating-input:hover ~ .rating-star,
+        .rating-input:checked ~ .rating-star {
+            color: orange;
+        }
+
     </style>
     <div class="container">
         <div class="row">
@@ -90,6 +114,23 @@
                         发布者: {{ mission.mission_taker.username }} |
                         浏览量: {{ mission.total_views }}
                     </p>
+                    <div class="rating-container">
+                        <h4>评分：</h4>
+                        <div class="rating-stars">
+                            <input type="radio" id="star5" name="rating" value="5" class="rating-input">
+                            <label for="star5" class="rating-star">&#9733;</label>
+                            <input type="radio" id="star4" name="rating" value="4" class="rating-input">
+                            <label for="star4" class="rating-star">&#9733;</label>
+                            <input type="radio" id="star3" name="rating" value="3" class="rating-input">
+                            <label for="star3" class="rating-star">&#9733;</label>
+                            <input type="radio" id="star2" name="rating" value="2" class="rating-input">
+                            <label for="star2" class="rating-star">&#9733;</label>
+                            <input type="radio" id="star1" name="rating" value="1" class="rating-input">
+                            <label for="star1" class="rating-star">&#9733;</label>
+                        </div>
+                        <button type="button" class="btn btn-primary" onclick="submitRating()">提交评分</button>
+                    </div>
+
                 </div>
 
                 <div class="mission-body">
@@ -186,6 +227,39 @@
                 window.alert("取消编辑");
             } else {
                 window.alert("这不是你的文章，你无权编辑");
+            }
+        }
+
+        function submitRating() {
+            const ratingInput = document.querySelector('input[name="rating"]:checked');
+            if (ratingInput) {
+                const rating = ratingInput.value;
+                const missionId = {{ mission.id }};
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                // 发送POST请求到后端保存评分
+                fetch(`/myapp/mission_rating/${missionId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({rating: rating})
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            alert('评分提交成功');
+                            location.reload();  // 刷新页面以更新评分显示
+                        } else {
+                            alert('评分提交失败');
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert('评分提交失败');
+                    });
+            } else {
+                alert('请选择评分');
             }
         }
     </script>
