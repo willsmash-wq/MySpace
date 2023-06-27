@@ -181,7 +181,6 @@ def mission_rating(request, id):
         return JsonResponse({'message': '无效的请求方法'}, status=400)
 
 
-from django.db.models import Count, Sum
 
 from django.db.models import Count, Sum, F
 
@@ -199,11 +198,14 @@ def contribution_rank_view(request):
         weighted_score = sum(mission.total_views * (mission.missionrating_set.aggregate(average=Avg('rating'))['average'] or 0) for mission in missions)
         weighted_scores.append(weighted_score)
 
+    medals = ['🥇', '🥈', '🥉'] + [''] * (len(users) - 3) # create a list of medals
+
     context = {
-        'users': zip(users, weighted_scores)
+        'users': zip(users, weighted_scores, medals)
     }
 
     return render(request, 'Mission/contribution_rank.html', context)
+
 
 
 
