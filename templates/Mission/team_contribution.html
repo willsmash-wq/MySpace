@@ -2,12 +2,12 @@
 
 {% block content %}
     <div class="container mt-4">
-        <h1 class="text-center mb-4">班组当月任务贡献排名</h1>
+        <h1 class="text-center mb-4">班组当月文章贡献排名</h1>
 
         <form action="{% url 'myapp:team_contribution' %}" method="GET" class="mb-4">
             <div class="row justify-content-center">
                 <div class="col-lg-5 col-md-8 col-sm-10">
-                    <label for="category">选择任务类型：</label>
+                    <label for="category">选择文章类型：</label>
                     <select name="category" id="category" class="form-control">
                         <option value="">全部类型</option>
                         <option value="销售支撑网类" {% if selected_category == '销售支撑网类' %}selected{% endif %}>
@@ -41,7 +41,7 @@
                     <div class="card h-100 shadow">
                         <div class="card-body">
                             <h5 class="card-title">{{ mission_count.mission_taker__profile__team }}</h5>
-                            <p class="card-text">任务数量：{{ mission_count.count }}</p>
+                            <p class="card-text">文章数量：{{ mission_count.count }}</p>
                         </div>
                         <div class="card-footer bg-white">
                             <div class="progress">
