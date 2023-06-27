@@ -1,5 +1,8 @@
+
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q, Count, Sum, Avg
+from django.utils import timezone
+
 from userprofile.forms import DepartmentTeamForm
 from .forms import MissionForm, CommentForm
 from django.contrib.auth.models import User
@@ -213,25 +216,20 @@ def contribution_rank_view(request):
 
 
 def team_contribution(request):
-    category = request.GET.get('category')  # 获取选择的任务类型
+    category = request.GET.get('category', '')
+    now = timezone.now()
+    if category == '':
+        mission_counts = Mission.objects.filter(created__year=now.year, created__month=now.month).values('mission_taker__profile__team').annotate(count=Count('id')).order_by('-count')
+        is_all_category = True
+    else:
+        mission_counts = Mission.objects.filter(article_type=category, created__year=now.year, created__month=now.month).values('mission_taker__profile__team').annotate(count=Count('id')).order_by('-count')
+        is_all_category = False
 
-    # 构建筛选条件
-    conditions = Q()
-    if category:
-        conditions &= Q(article_type=category)
-
-    mission_counts = (
-        Mission.objects.filter(conditions)
-        .values('mission_taker__profile__team')
-        .annotate(count=Count('id'))
-        .order_by('-count')
-    )
-
-    max_count = mission_counts.first()['count'] if mission_counts else 0  # 最大任务数量，用于计算位置
+    selected_category = category
 
     context = {
         'mission_counts': mission_counts,
-        'max_count': max_count,
-        'selected_category': category,
+        'selected_category': selected_category,
+        'is_all_category': is_all_category,
     }
     return render(request, 'Mission/team_contribution.html', context)
