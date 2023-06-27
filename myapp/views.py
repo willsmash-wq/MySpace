@@ -1,5 +1,5 @@
 from django.core.files.storage import FileSystemStorage
-from django.db.models import Q
+from django.db.models import Q, Count, Sum, Avg
 from userprofile.forms import DepartmentTeamForm
 from .forms import MissionForm, CommentForm
 from django.contrib.auth.models import User
@@ -181,5 +181,28 @@ def mission_rating(request, id):
         return JsonResponse({'message': '无效的请求方法'}, status=400)
 
 
+from django.db.models import Count, Sum
+
+from django.db.models import Count, Sum, F
+
+def contribution_rank_view(request):
+    users = User.objects.annotate(
+        total_missions=Count('taken_missions', distinct=True),
+        total_views=Sum('taken_missions__total_views', distinct=True),
+        total_comments=Count('taken_missions__comments', distinct=True),
+        total_rating=Sum('taken_missions__missionrating__rating', distinct=True),
+    ).order_by('-total_views')
+
+    weighted_scores = []
+    for user in users:
+        missions = user.taken_missions.all()
+        weighted_score = sum(mission.total_views * mission.missionrating_set.aggregate(average=Avg('rating'))['average'] for mission in missions)
+        weighted_scores.append(weighted_score)
+
+    context = {
+        'users': zip(users, weighted_scores)
+    }
+
+    return render(request, 'Mission/contribution_rank.html', context)
 
 
