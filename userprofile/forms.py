@@ -38,7 +38,12 @@ class DepartmentTeamForm(forms.ModelForm):
 
    TEAM_CHOICES = [
       ('数据支撑班', '数据支撑班'),
+      ('结算账务班', '结算账务班'),
       ('业务稽核班', '业务稽核班'),
+      ('能力保障班', '能力保障班'),
+      ('响应支撑班', '响应支撑班'),
+      ('集中受理班', '集中受理班'),
+      ('业务运营与IT支撑中心本部', '业务运营与IT支撑中心本部'),
    ]
 
    department = forms.ChoiceField(choices=DEPARTMENT_CHOICES)
@@ -47,4 +52,5 @@ class DepartmentTeamForm(forms.ModelForm):
    class Meta:
       model = Profile
       fields = ('department', 'team')
+
 
