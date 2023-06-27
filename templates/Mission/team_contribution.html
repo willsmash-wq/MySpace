@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>班组任务贡献排名</h1>
+
+    <form action="{% url 'myapp:team_contribution' %}" method="GET">
+        <label for="category">选择任务类型：</label>
+        <select name="category" id="category">
+            <option value="">全部类型</option>
+            <option value="销售支撑网类" {% if selected_category == '销售支撑网类' %}selected{% endif %}>销售支撑网类
+            </option>
+            <option value="每周实例新建类" {% if selected_category == '每周实例新建类' %}selected{% endif %}>
+                每周实例新建类
+            </option>
+            <option value="认领规则类" {% if selected_category == '认领规则类' %}selected{% endif %}>认领规则类</option>
+            <option value="月度稽核类" {% if selected_category == '月度稽核类' %}selected{% endif %}>月度稽核类</option>
+            <option value="代码类" {% if selected_category == '代码类' %}selected{% endif %}>代码类</option>
+            <option value="虚拟类" {% if selected_category == '虚拟类' %}selected{% endif %}>虚拟类</option>
+            <option value="问答类" {% if selected_category == '问答类' %}selected{% endif %}>问答类</option>
+            <option value="下基层" {% if selected_category == '下基层' %}selected{% endif %}>下基层</option>
+            <!-- 添加其他任务类型选项 -->
+        </select>
+        <input type="submit" value="筛选">
+    </form>
+
+    <div class="river">
+        {% for mission_count in mission_counts %}
+            <div class="boat" style="left: {{ mission_count.count|floatformat:0 }}/ {{ max_count }} * 100%;">
+                <span>{{ mission_count.mission_taker__profile__team }}</span>
+            </div>
+        {% empty %}
+            <p>暂无数据</p>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -1,5 +1,6 @@
 from django.urls import path
 from . import views
+
 # 正在部署的应用的名称
 app_name = 'myapp'
 urlpatterns = [
@@ -12,4 +13,5 @@ urlpatterns = [
     path('comment_delete/<int:id>/', views.comment_delete, name="comment_delete"),
     path('mission_rating/<int:id>/', views.mission_rating, name='mission_rating'),
     path('contribution_rank/', views.contribution_rank_view, name='contribution_rank'),
+    path('team-contribution/', views.team_contribution, name='team_contribution'),
 ]

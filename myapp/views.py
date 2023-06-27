@@ -12,6 +12,7 @@ import markdown
 # 视图函数
 from django.contrib.auth.decorators import login_required
 
+
 @login_required
 def mission_list(request):
     show_guide = False
@@ -60,6 +61,7 @@ def mission_list(request):
         'selected_category': category,
     }
     return render(request, 'mission/list.html', context)
+
 
 # 文章详情
 @login_required
@@ -137,15 +139,15 @@ def comment_delete(request, id):
     return redirect('myapp:mission_detail', id=mission.id)
 
 
-
 def mission_delete(request, id):
-   mission = Mission.objects.get(id=id)
-   mission.delete()
-   return redirect('myapp:mission_list')
+    mission = Mission.objects.get(id=id)
+    mission.delete()
+    return redirect('myapp:mission_list')
+
 
 def mission_update(request, id):
     mission = Mission.objects.get(id=id)
-    if request.method =="POST":
+    if request.method == "POST":
         mission_form = MissionForm(request.POST, instance=mission)
         if mission_form.is_valid():
             mission_form.save()
@@ -156,6 +158,7 @@ def mission_update(request, id):
         mission_form = MissionForm(instance=mission)
         context = {'mission': mission, 'form': mission_form}
         return render(request, 'Mission/update.html', context)
+
 
 from django.http import JsonResponse
 import json
@@ -181,8 +184,8 @@ def mission_rating(request, id):
         return JsonResponse({'message': '无效的请求方法'}, status=400)
 
 
-
 from django.db.models import Count, Sum, F
+
 
 def contribution_rank_view(request):
     users = User.objects.annotate(
@@ -195,10 +198,12 @@ def contribution_rank_view(request):
     weighted_scores = []
     for user in users:
         missions = user.taken_missions.all()
-        weighted_score = sum(mission.total_views * (mission.missionrating_set.aggregate(average=Avg('rating'))['average'] or 0) for mission in missions)
+        weighted_score = sum(
+            mission.total_views * (mission.missionrating_set.aggregate(average=Avg('rating'))['average'] or 0) for
+            mission in missions)
         weighted_scores.append(weighted_score)
 
-    medals = ['🥇', '🥈', '🥉'] + [''] * (len(users) - 3) # create a list of medals
+    medals = ['🥇', '🥈', '🥉'] + [''] * (len(users) - 3)  # create a list of medals
 
     context = {
         'users': zip(users, weighted_scores, medals)
@@ -207,5 +212,26 @@ def contribution_rank_view(request):
     return render(request, 'Mission/contribution_rank.html', context)
 
 
+def team_contribution(request):
+    category = request.GET.get('category')  # 获取选择的任务类型
 
+    # 构建筛选条件
+    conditions = Q()
+    if category:
+        conditions &= Q(article_type=category)
 
+    mission_counts = (
+        Mission.objects.filter(conditions)
+        .values('mission_taker__profile__team')
+        .annotate(count=Count('id'))
+        .order_by('-count')
+    )
+
+    max_count = mission_counts.first()['count'] if mission_counts else 0  # 最大任务数量，用于计算位置
+
+    context = {
+        'mission_counts': mission_counts,
+        'max_count': max_count,
+        'selected_category': category,
+    }
+    return render(request, 'Mission/team_contribution.html', context)
