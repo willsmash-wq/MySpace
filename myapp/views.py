@@ -3,7 +3,7 @@ from django.db.models import Q
 from userprofile.forms import DepartmentTeamForm
 from .forms import MissionForm, CommentForm
 from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from .models import Mission, Comment, MissionRating
 from django.core.paginator import Paginator
@@ -62,9 +62,11 @@ def mission_list(request):
     return render(request, 'mission/list.html', context)
 
 # 文章详情
+@login_required
 def mission_detail(request, id):
-    mission = Mission.objects.get(id=id)
+    mission = get_object_or_404(Mission, id=id)
     new_comment = None
+    user_rating = None
 
     if request.method == 'POST':
         comment_form = CommentForm(data=request.POST)
@@ -76,8 +78,12 @@ def mission_detail(request, id):
     else:
         comment_form = CommentForm()
 
+    if request.user.is_authenticated:
+        user_rating = MissionRating.objects.filter(mission=mission, user=request.user).first()
+
     mission.total_views += 1
     mission.save(update_fields=['total_views'])
+
     md = markdown.Markdown(
         extensions=[
             'markdown.extensions.extra',
@@ -86,10 +92,17 @@ def mission_detail(request, id):
         ]
     )
     mission.body = md.convert(mission.body)
-    context = {'mission': mission, 'toc': md.toc, 'comments': mission.comments.all(), 'new_comment': new_comment,
-               'comment_form': comment_form}
-    return render(request, 'mission/detail.html', context)
 
+    context = {
+        'mission': mission,
+        'toc': md.toc,
+        'comments': mission.comments.all(),
+        'new_comment': new_comment,
+        'comment_form': comment_form,
+        'user_rating': user_rating,
+    }
+
+    return render(request, 'mission/detail.html', context)
 
 
 @login_required(login_url='/userprofile/login')
@@ -147,25 +160,22 @@ def mission_update(request, id):
 from django.http import JsonResponse
 import json
 
+
 @login_required
 def mission_rating(request, id):
     if request.method == 'POST':
-        # 解析JSON数据
         data = json.loads(request.body)
         rating = data.get('rating', 0)
-        mission = Mission.objects.get(id=id)
+        mission = get_object_or_404(Mission, id=id)
         user = request.user
 
-        # 检查用户是否已经对该任务评分过
         mission_rating, created = MissionRating.objects.get_or_create(mission=mission, user=user)
-        if not created:
-            mission_rating.rating = rating
-            mission_rating.save()
-        else:
-            mission.rating_users.add(user, through_defaults={'rating': rating})
+        mission_rating.rating = rating
+        mission_rating.save()
 
         return JsonResponse({'message': '评分保存成功'})
     else:
         return JsonResponse({'message': '无效的请求方法'}, status=400)
+
 
 

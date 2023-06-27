@@ -117,15 +117,23 @@
                     <div class="rating-container">
                         <h4>评分：</h4>
                         <div class="rating-stars">
-                            <input type="radio" id="star5" name="rating" value="5" class="rating-input">
+                            {% if user_rating %}
+                                <p>你已经对这个任务评分了，你的评分是 {{ user_rating.rating }}</p>
+                            {% endif %}
+                            <input type="radio" id="star5" name="rating" value="5" class="rating-input"
+                                   {% if user_rating.rating == 5 %}checked{% endif %}>
                             <label for="star5" class="rating-star">&#9733;</label>
-                            <input type="radio" id="star4" name="rating" value="4" class="rating-input">
+                            <input type="radio" id="star4" name="rating" value="4" class="rating-input"
+                                   {% if user_rating.rating == 4 %}checked{% endif %}>
                             <label for="star4" class="rating-star">&#9733;</label>
-                            <input type="radio" id="star3" name="rating" value="3" class="rating-input">
+                            <input type="radio" id="star3" name="rating" value="3" class="rating-input"
+                                   {% if user_rating.rating == 3 %}checked{% endif %}>
                             <label for="star3" class="rating-star">&#9733;</label>
-                            <input type="radio" id="star2" name="rating" value="2" class="rating-input">
+                            <input type="radio" id="star2" name="rating" value="2" class="rating-input"
+                                   {% if user_rating.rating == 2 %}checked{% endif %}>
                             <label for="star2" class="rating-star">&#9733;</label>
-                            <input type="radio" id="star1" name="rating" value="1" class="rating-input">
+                            <input type="radio" id="star1" name="rating" value="1" class="rating-input"
+                                   {% if user_rating.rating == 1 %}checked{% endif %}>
                             <label for="star1" class="rating-star">&#9733;</label>
                         </div>
                         <button type="button" class="btn btn-primary" onclick="submitRating()">提交评分</button>
@@ -246,12 +254,13 @@
                     },
                     body: JSON.stringify({rating: rating})
                 })
-                    .then(response => {
-                        if (response.ok) {
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message == '评分保存成功') {
                             alert('评分提交成功');
                             location.reload();  // 刷新页面以更新评分显示
                         } else {
-                            alert('评分提交失败');
+                            alert('评分提交失败：' + data.message);
                         }
                     })
                     .catch(error => {
