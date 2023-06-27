@@ -23,6 +23,7 @@ class Mission(models.Model):
         ('代码类', '代码类'),
         ('虚拟类', '虚拟类'),
         ('问答类', '问答类'),
+        ('下基层', '下基层'),
     )
     article_type = models.CharField(max_length=20, choices=ARTICLE_TYPE_CHOICES, default='虚拟类')
 
