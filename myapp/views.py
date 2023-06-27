@@ -170,12 +170,16 @@ def mission_rating(request, id):
         user = request.user
 
         mission_rating, created = MissionRating.objects.get_or_create(mission=mission, user=user)
-        mission_rating.rating = rating
-        mission_rating.save()
+        if created:
+            mission_rating.rating = rating
+            mission_rating.save()
+            return JsonResponse({'message': '评分保存成功'})
+        else:
+            return JsonResponse({'message': '你已经评过分了，不能再评分'}, status=400)
 
-        return JsonResponse({'message': '评分保存成功'})
     else:
         return JsonResponse({'message': '无效的请求方法'}, status=400)
+
 
 
 
