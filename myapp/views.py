@@ -196,7 +196,7 @@ def contribution_rank_view(request):
     weighted_scores = []
     for user in users:
         missions = user.taken_missions.all()
-        weighted_score = sum(mission.total_views * mission.missionrating_set.aggregate(average=Avg('rating'))['average'] for mission in missions)
+        weighted_score = sum(mission.total_views * (mission.missionrating_set.aggregate(average=Avg('rating'))['average'] or 0) for mission in missions)
         weighted_scores.append(weighted_score)
 
     context = {
@@ -204,5 +204,6 @@ def contribution_rank_view(request):
     }
 
     return render(request, 'Mission/contribution_rank.html', context)
+
 
 
