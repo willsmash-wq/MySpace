@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models import Avg
 from django.utils import timezone
 from django_ckeditor_5.fields import CKEditor5Field
 
@@ -31,7 +32,9 @@ class Mission(models.Model):
     def __str__(self):
         return self.title
 
-
+    def average_rating(self):
+        ratings = self.missionrating_set.all()
+        return ratings.aggregate(average=Avg('rating'))['average']
 
 class Comment(models.Model):
     mission = models.ForeignKey(Mission, on_delete=models.CASCADE, related_name='comments')

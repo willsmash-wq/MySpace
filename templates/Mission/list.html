@@ -6,35 +6,36 @@
 {% endblock title %}
 
 {% block content %}
-<style>
-@keyframes float-up {
-    from {
-        opacity: 0;
-        transform: translateY(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+    <style>
+        @keyframes float-up {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-.card.shadow {
-    animation: float-up 0.5s ease;
-    animation-fill-mode: backwards;
-    background: rgba(255, 255, 255, 0.5);  /* This gives a glass effect */
-    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-    backdrop-filter: blur(4px);
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-}
+        .card.shadow {
+            animation: float-up 0.5s ease;
+            animation-fill-mode: backwards;
+            background: rgba(255, 255, 255, 0.5); /* This gives a glass effect */
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
 
-.card.shadow:hover {
-    transform: scale(1.005);  /* This will slightly enlarge the mission box when hovered */
-    transition: transform .2s;  /* Smooth transition */
-}
-/* Add more if you have more missions */
+        .card.shadow:hover {
+            transform: scale(1.005); /* This will slightly enlarge the mission box when hovered */
+            transition: transform .2s; /* Smooth transition */
+        }
 
-</style>
+        /* Add more if you have more missions */
+
+    </style>
     {% if show_guide %}
         <!-- 提醒框 -->
         <div class="alert alert-warning" role="alert" id="guide-alert">
@@ -150,9 +151,12 @@
                     <div class="card-body">
                         <div class="d-flex align-items-center mb-3">
                             <div class="ios-icon"></div>
-                            <h4 class="card-title font-weight-bold ml-2">{{ mission.title }}</h4>
+                            <h4 class="card-title font-weight-bold ml-2">
+                                {{ mission.title }}
+                                <span class="ml-2 badge badge-primary">得分:{{ mission.average_rating|floatformat:2 }}</span>
+                            </h4>
                         </div>
-                        <p class="card-text">{{ mission.body|slice:'100' }}...</p>
+                        <p class="card-text">{{ mission.body|striptags|slice:'100' }}...</p>
                     </div>
                     <div class="card-footer d-flex align-items-center">
                         <a href="{% url 'myapp:mission_detail' mission.id %}" class="btn btn-primary mr-auto">阅读</a>

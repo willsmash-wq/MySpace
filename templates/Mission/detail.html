@@ -118,7 +118,7 @@
                         <h4>评分：</h4>
                         <div class="rating-stars">
                             {% if user_rating %}
-                                <p>你已经对这个任务评分了，你的评分是 {{ user_rating.rating }}</p>
+                                <p>你已经对这篇文章评分了，你的评分是 {{ user_rating.rating }}</p>
                             {% endif %}
                             <input type="radio" id="star5" name="rating" value="5" class="rating-input"
                                    {% if user_rating.rating == 5 %}checked{% endif %}>
