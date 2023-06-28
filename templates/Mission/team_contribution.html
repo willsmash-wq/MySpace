@@ -1,66 +1,27 @@
-
-
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
 {% block content %}
-    <div class="container mt-4">
-        <h1 class="text-center mb-4">班组当月文章贡献排名</h1>
+    <h2>班组任务贡献排名</h2>
 
-        <form action="{% url 'myapp:team_contribution' %}" method="GET" class="mb-4">
-            <div class="row justify-content-center">
-                <div class="col-lg-5 col-md-8 col-sm-10">
-                    <label for="category">选择文章类型：</label>
-                    <select name="category" id="category" class="form-control">
-                        <option value="">全部类型</option>
-                        <option value="销售支撑网类" {% if selected_category == '销售支撑网类' %}selected{% endif %}>
-                            销售支撑网类
-                        </option>
-                        <option value="认领规则类" {% if selected_category == '认领规则类' %}selected{% endif %}>
-                            认领规则类
-                        </option>
-                        <option value="每周实例新建类"
-                                {% if selected_category == '每周实例新建类' %}selected{% endif %}>每周实例新建类
-                        </option>
-                        <option value="月度稽核类" {% if selected_category == '月度稽核类' %}selected{% endif %}>
-                            月度稽核类
-                        </option>
-                        <option value="代码类" {% if selected_category == '代码类' %}selected{% endif %}>代码类</option>
-                        <option value="虚拟类" {% if selected_category == '虚拟类' %}selected{% endif %}>虚拟类</option>
-                        <option value="问答类" {% if selected_category == '问答类' %}selected{% endif %}>问答类</option>
-                        <option value="下基层" {% if selected_category == '下基层' %}selected{% endif %}>下基层</option>
-                        <!-- rest of the options -->
-                    </select>
-                </div>
-                <div class="col-auto">
-                    <button type="submit" class="btn btn-primary mt-3 mt-lg-0">筛选</button>
-                </div>
-            </div>
-        </form>
+    <form method="get">
+        {{ form.as_p }}
+        <button type="submit">筛选</button>
+    </form>
 
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            {% for mission_count in mission_counts %}
-                <div class="col">
-                    <div class="card h-100 shadow bg-body rounded border-0">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">{{ mission_count.mission_taker__profile__team }}</h5>
-                            <div class="d-flex justify-content-center align-items-baseline">
-                                <h1 class="display-4 me-2">{{ mission_count.count }}</h1>
-                                <span class="text-muted">articles</span>
-                            </div>
-                        </div>
-                        <div class="card-footer bg-transparent border-top-0">
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                                    style="width: {{ mission_count.count|floatformat:0 }}/ {{ max_count }} * 100%;"
-                                    aria-valuenow="{{ mission_count.count|floatformat:0 }}/ {{ max_count }} * 100;"
-                                    aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% empty %}
-                <p class="text-center">暂无数据</p>
+    <table>
+        <thead>
+            <tr>
+                <th>班组</th>
+                <th>发布数量</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for team, count in team_counts %}
+                <tr>
+                    <td>{{ team }}</td>
+                    <td>{{ count }}</td>
+                </tr>
             {% endfor %}
-        </div>
-    </div>
+        </tbody>
+    </table>
 {% endblock %}

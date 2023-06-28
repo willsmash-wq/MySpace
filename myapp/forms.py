@@ -20,3 +20,6 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('body',)
+
+class ArticleTypeForm(forms.Form):
+    article_type = forms.ChoiceField(choices=Mission.ARTICLE_TYPE_CHOICES)

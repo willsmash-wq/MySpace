@@ -2,9 +2,10 @@
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q, Count, Sum, Avg
 from django.utils import timezone
-
+import calendar
+from datetime import datetime
 from userprofile.forms import DepartmentTeamForm
-from .forms import MissionForm, CommentForm
+from .forms import MissionForm, CommentForm, ArticleTypeForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
@@ -216,20 +217,34 @@ def contribution_rank_view(request):
 
 
 def team_contribution(request):
-    category = request.GET.get('category', '')
-    now = timezone.now()
-    if category == '':
-        mission_counts = Mission.objects.filter(created__year=now.year, created__month=now.month).values('mission_taker__profile__team').annotate(count=Count('id')).order_by('-count')
-        is_all_category = True
-    else:
-        mission_counts = Mission.objects.filter(article_type=category, created__year=now.year, created__month=now.month).values('mission_taker__profile__team').annotate(count=Count('id')).order_by('-count')
-        is_all_category = False
+    # 获取当前月份的起始日期和结束日期
+    year = datetime.now().year
+    month = datetime.now().month
+    start_date, end_date = calendar.monthrange(year, month)
+    start_date = datetime(year, month, 1)
+    end_date = datetime(year, month, end_date)
+    form = ArticleTypeForm(request.GET)
 
-    selected_category = category
+    # 如果表单有效（用户选择了一个文章类型）
+    if form.is_valid():
+        selected_type = form.cleaned_data.get('article_type')
+    else:
+        selected_type = Mission.ARTICLE_TYPE_CHOICES[0][0]
+
+    # 获取每个班组的发布数量并排序
+    teams = DepartmentTeamForm.TEAM_CHOICES
+    team_counts = []
+    for team_choice in teams:
+        team = team_choice[0]
+        count = Mission.objects.filter(mission_taker__profile__team=team, article_type=selected_type,
+                                       created__range=(start_date, end_date)).count()
+        team_counts.append((team, count))
+
+    # 根据发布数量降序排序
+    team_counts.sort(key=lambda x: x[1], reverse=True)
 
     context = {
-        'mission_counts': mission_counts,
-        'selected_category': selected_category,
-        'is_all_category': is_all_category,
+        'form': form,
+        'team_counts': team_counts
     }
     return render(request, 'Mission/team_contribution.html', context)
