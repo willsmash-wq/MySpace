@@ -5,6 +5,7 @@
 
 {% block extra_css %}
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
         @keyframes slide-in-blurred-top {
             0% {
@@ -20,9 +21,12 @@
                 opacity: 1;
             }
         }
+
         .slide-in-blurred-top {
             animation: slide-in-blurred-top 0.6s cubic-bezier(0.230, 1.000, 0.320, 1.000) both;
         }
+
+
     </style>
 {% endblock %}
 
@@ -30,29 +34,57 @@
     <div class="flex items-center justify-center min-h-screen p-6 bg-gray-50">
         <div class="w-full">
             <div class="p-8 space-y-8 bg-white rounded-lg shadow-xl dark:bg-gray-800">
-                <p class="text-4xl font-bold text-center">班组任务贡献排名</p>
-                <form method="get" class="flex justify-center">
-                    <div class="relative">
+                <p class="text-4xl font-bold text-center">班组文章发布情况</p>
+                <form method="get" class="flex justify-center mx-auto" style="width: 20%;">
+                    <div class="relative w-full">
                         {{ form.article_type }}
-                        <button class="absolute right-0 px-4 py-2 text-white bg-blue-500 rounded-l-none focus:bg-blue-600 hover:bg-blue-600" type="submit">筛选</button>
+                        <button class="absolute right-0 px-4 py-2 text-white bg-blue-500 rounded-l-none focus:bg-blue-600 hover:bg-blue-600"
+                                type="submit">筛选
+                        </button>
                     </div>
                 </form>
-                <ul class="divide-y">
-                    {% for team, count in team_counts %}
-                        <li class="py-4 animate__animated animate__fadeIn">
-                            <div class="space-y-2">
-                                <div class="flex items-center justify-between">
-                                    <p class="text-lg font-semibold text-gray-700">{{ team }}</p>
-                                    <p class="text-lg font-semibold text-blue-500">{{ count }}</p>
-                                </div>
-                                <div class="w-full h-1 bg-blue-100 rounded-full">
-                                    <div class="h-full text-center text-xs text-white bg-blue-500 rounded-full slide-in-blurred-top" style="width: {{ count|times:20 }}%;"></div>
-                                </div>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
+                <div class="flex flex-row justify-between">
+                    {#                    <ul class="divide-y flex-grow">#}
+                    {#                        {% for team, count in team_counts %}#}
+                    {#                            <li class="py-4 animate__animated animate__fadeIn">#}
+                    {#                                <div class="space-y-2">#}
+                    {#                                    <div class="flex items-center justify-between">#}
+                    {#                                        <p class="text-lg font-semibold text-gray-700">{{ team }}</p>#}
+                    {#                                        <p class="text-lg font-semibold text-blue-500">{{ count }}</p>#}
+                    {#                                    </div>#}
+                    {#                                    <div class="w-full h-1 bg-blue-100 rounded-full">#}
+                    {#                                        <div class="h-full text-center text-xs text-white bg-blue-500 rounded-full slide-in-blurred-top"#}
+                    {#                                             style="width: {{ count|times:20 }}%;"></div>#}
+                    {#                                    </div>#}
+                    {#                                </div>#}
+                    {#                            </li>#}
+                    {#                        {% endfor %}#}
+                    {#                    </ul>#}
+                    <div id="chart-container" class="flex-grow" style="height: 600px;"></div>
+                </div>
             </div>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+    <script src="{% static 'jquery/index.js' %}"></script>
+    <script>
+        var option = {
+            series: [
+                {
+                    data: [
+                        {% for team, count in team_counts %}
+                            {value: {{ count }}, name: "{{ team }}:{{ count }}"},
+                        {% endfor %}
+                    ]
+                }
+            ]
+        };
+
+        // 渲染图表
+        var myChart = echarts.init(document.getElementById('chart-container'));
+        myChart.setOption(option);
+
+        // 监听窗口大小变化，自适应图表
+        window.addEventListener("resize", myChart.resize);
+    </script>
 {% endblock %}
