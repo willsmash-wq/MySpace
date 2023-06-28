@@ -61,6 +61,7 @@
     <link rel="stylesheet" href="../../static/bootstrap/css/style.default.css" id="theme-stylesheet">
     <!-- Add animate.css -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="{% static 'css/style1.css' %}">
     <style>
         #registered_users_area {
             display: none;
@@ -112,12 +113,7 @@
                 <!-- Logo & Information Panel-->
                 <div class="col-lg-6 animate__animated animate__fadeIn">
                     <div class="info d-flex align-items-center">
-                        <div class="content">
-                            <div class="logo">
-                                <h1>欢迎登录</h1>
-                            </div>
-                            <p>网格交流论坛</p>
-                        </div>
+                                <div id="chart-container" style="height: 500px;width: 500px"></div>
                     </div>
                 </div>
                 <!-- Form Panel    -->
@@ -171,6 +167,8 @@
 
 
 <!-- JavaScript files-->
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+<script src="{% static 'jquery/index1.js' %}"></script>
 <script src="https://www.jq22.com/jquery/jquery-1.10.2.js"></script>
 <script src="https://www.jq22.com/jquery/bootstrap-3.3.4.js"></script>
 <script src="../../static/bootstrap/js/jquery.validate.min.js"></script><!--表单验证-->
