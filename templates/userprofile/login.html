@@ -12,7 +12,7 @@
         </script>
     {% endif %}
 </head>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 80px">
     <div class="container">
         <a class="navbar-brand" href="#">网格论坛系统</a>
         <div>
@@ -92,7 +92,61 @@
             color: #000; /* 设置文字颜色为黑色 */
         }
 
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
+        #chart-container {
+            height: 500px;
+            width: 500px;
+            margin-right: 50px;
+        }
+
+        .card {
+            width: 350px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        .form-control {
+            border: none;
+            border-bottom: 1px solid #ddd;
+            border-radius: 0;
+            box-shadow: none;
+        }
+
+        .form-control:focus {
+            border-bottom: 1px solid #007BFF;
+            box-shadow: none;
+            outline: none;
+        }
+
+        .btn-primary {
+            background-color: #007BFF;
+            border: none;
+            border-radius: 20px;
+            padding: 5px 30px;
+            font-weight: 600;
+        }
+
+        .signup {
+            color: #007BFF;
+            text-decoration: none;
+        }
+
+        .signup:hover {
+            color: #0056b3;
+            text-decoration: none;
+        }
     </style>
 
 </head>
@@ -106,61 +160,32 @@
 </div>
 
 
-<div class="page login-page">
-    <div class="container d-flex align-items-center">
-        <div class="form-holder has-shadow">
-            <div class="row">
-                <!-- Logo & Information Panel-->
-                <div class="col-lg-6 animate__animated animate__fadeIn">
-                    <div class="info d-flex align-items-center">
-                                <div id="chart-container" style="height: 500px;width: 500px"></div>
-                    </div>
+<div class="container">
+    <div id="chart-container"></div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="post" action="." id='loginform'>
+                {% csrf_token %}
+                <div class="form-floating mb-3">
+                    <input class="form-control" id="username" name='username' data-msg="请输入用户名"
+                           placeholder="用户名" type="text" data-sb-validations="required"/>
+                    <div class="invalid-feedback" data-sb-feedback="username:required">A name is required.</div>
                 </div>
-                <!-- Form Panel    -->
-                <div class="col-lg-6 bg-white animate__animated animate__fadeInRight">
-                    <div class="form d-flex align-items-center">
-                        <div class="content">
-                            <form method="post" action="." id='loginform'>
-                                {% csrf_token %}
-                                <div class="form-floating mb-3">
-                                    <input class="form-control" id="username" name='username' data-msg="请输入用户名"
-                                           placeholder="用户名" type="text"
-                                           placeholder="Enter your name..." data-sb-validations="required"/>
 
-                                    <div class="invalid-feedback" data-sb-feedback="username:required">A name is
-                                        required.
-                                    </div>
-                                </div>
-
-                                <div class="form-floating mb-3">
-                                    <input class="form-control" id="password" name='password' data-msg="请输入密码"
-                                           placeholder="密码" type="password"
-                                           placeholder="Enter your password..." data-sb-validations="required"/>
-
-                                    <div class="invalid-feedback" data-sb-feedback="password:required">A password is
-                                        required.
-                                    </div>
-                                </div>
-
-                                <button id="login" type="submit" class="btn btn-primary">登录</button>
-                                <div style="margin-top: -40px;">
-                                    <div class="custom-control custom-checkbox " style="float: right;">
-                                        <input type="checkbox" class="custom-control-input" id="check2">
-                                        <label class="custom-control-label" for="check2">自动登录</label>
-                                    </div>
-                                    <div class="custom-control custom-checkbox " style="float: right;">
-                                        <input type="checkbox" class="custom-control-input" id="check1">
-                                        <label class="custom-control-label" for="check1">记住密码&nbsp;&nbsp;</label>
-                                    </div>
-                                </div>
-                            </form>
-                            <br/>
-                            <small>没有账号?</small><a href='{% url "userprofile:register" %}'
-                                                       class="signup">&nbsp;注册</a>
-                        </div>
-                    </div>
+                <div class="form-floating mb-3">
+                    <input class="form-control" id="password" name='password' data-msg="请输入密码"
+                           placeholder="密码" type="password" data-sb-validations="required"/>
+                    <div class="invalid-feedback" data-sb-feedback="password:required">A password is required.</div>
                 </div>
-            </div>
+
+                <div class="d-flex justify-content-between mb-3">
+                    <button id="login" type="submit" class="btn btn-primary">登录</button>
+                </div>
+
+                <small>没有账号?</small><a href='{% url "userprofile:register" %}'
+                                           class="signup">注册</a>
+            </form>
         </div>
     </div>
 </div>
@@ -217,7 +242,6 @@
             }, 1000);
         }
     });
-
 
 
 </script>
