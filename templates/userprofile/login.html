@@ -12,40 +12,9 @@
         </script>
     {% endif %}
 </head>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="height: 80">
-    <div class="container">
-        <a class="navbar-brand" href="#">网格论坛系统</a>
-        <div>
-            <ul class="navbar-nav">
+
                 <button id="registered_users_button" class="btn btn-info">已注册用户</button>
 
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'myapp:mission_list' %}">所有文章</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{% url 'myapp:mission_create' %}">新建文章</a>
-                </li>
-                {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            {{ user.username }}
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="{% url "userprofile:edit" user.id %}">User</a>
-                            <a class="dropdown-item" href="{% url "userprofile:logout" %}">Exit</a>
-                            <a class="dropdown-item" href="#" onclick="user_delete()">Delete</a>
-                        </div>
-                    </li>
-                {% else %}
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'userprofile:login' %}">登录</a>
-                    </li>
-                {% endif %}
-            </ul>
-        </div>
-    </div>
-</nav>
 
 
 <!DOCTYPE html>
