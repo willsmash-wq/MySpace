@@ -30,12 +30,12 @@ from .views import IndexView
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('myapp/', include('myapp.urls')),
-    path('admin/', admin.site.urls),
-    path('userprofile/', include('userprofile.urls', namespace='userprofile')),
-    path('',views.shou),
-    path('captcha/', include('captcha.urls')),  # 图片验证码 路由
-    path('refresh_captcha/', views.refresh_captcha),  # 刷新验证码，ajax
-    path('test/', IndexView.as_view()),  # get与post请求路径
-    path("ckeditor5/", include('django_ckeditor_5.urls'), name="ck_editor_5_upload_file"),
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+                  path('myapp/', include('myapp.urls')),
+                  path('admin/', admin.site.urls),
+                  path('userprofile/', include('userprofile.urls', namespace='userprofile')),
+                  path('', views.shou, name='shou'),
+                  path('captcha/', include('captcha.urls')),  # 图片验证码 路由
+                  path('refresh_captcha/', views.refresh_captcha, name='refresh_captcha'),  # 刷新验证码，ajax
+                  path('test/', IndexView.as_view(), name='test'),  # get与post请求路径
+                  path("ckeditor5/", include('django_ckeditor_5.urls'), name="ck_editor_5_upload_file"),
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
