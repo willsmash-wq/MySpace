@@ -14,4 +14,5 @@ urlpatterns = [
     path('mission_rating/<int:id>/', views.mission_rating, name='mission_rating'),
     path('contribution_rank/', views.contribution_rank_view, name='contribution_rank'),
     path('team-contribution/', views.team_contribution, name='team_contribution'),
+    path('data_analysis/', views.data_analysis, name='data_analysis'),
 ]

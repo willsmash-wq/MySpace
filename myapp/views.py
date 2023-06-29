@@ -1,4 +1,3 @@
-
 from django.core.files.storage import FileSystemStorage
 from django.db.models import Q, Count, Sum, Avg
 from django.utils import timezone
@@ -15,6 +14,8 @@ from django.conf import settings
 import markdown
 # 视图函数
 from django.contrib.auth.decorators import login_required
+import pandas as pd
+import sweetviz as sv
 
 
 @login_required
@@ -248,3 +249,22 @@ def team_contribution(request):
         'team_counts': team_counts
     }
     return render(request, 'Mission/team_contribution.html', context)
+
+
+def data_analysis(request):
+    return render(request, 'Mission/data_analysis.html')
+
+
+def data_analysis(request):
+    if request.method == 'POST':
+        excel_file = request.FILES["excel_file"]
+        if (str(excel_file).split('.')[-1] == 'xls' or str(excel_file).split('.')[-1] == 'xlsx'):
+            data_xls = pd.read_excel(excel_file, index_col=None)
+            data_xls.to_csv('output.csv', encoding='utf-8-sig', index=False)
+            data = pd.read_csv('output.csv', encoding='utf-8-sig')
+            # 创建一个sweetviz的Dataframe报告对象
+            report = sv.analyze(data)
+            # 创建一个HTML文件
+            report.show_html('templates/Mission/Report.html')
+            return render(request, 'Mission/Report.html')
+    return render(request, 'Mission/data_analysis.html')
