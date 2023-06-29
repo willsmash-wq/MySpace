@@ -52,7 +52,7 @@ class IndexView(View):
         capt = request.POST.get("captcha", None)  # 用户提交的验证码
         key = request.POST.get("hashkey", None)  # 验证码答案
         if jarge_captcha(capt, key):
-           #return HttpResponse("验证码正确")
+            request.session['captcha_validated'] = True  # 添加这行代码
             return redirect("userprofile:login")
         else:
             return HttpResponse("验证码错误")
