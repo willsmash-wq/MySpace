@@ -262,6 +262,7 @@ def data_analysis(request):
             data_xls = pd.read_excel(excel_file, index_col=None)
             data_xls.to_csv('output.csv', encoding='utf-8-sig', index=False)
             data = pd.read_csv('output.csv', encoding='utf-8-sig')
+            sv.config_parser.read("Override.ini")
             # 创建一个sweetviz的Dataframe报告对象
             report = sv.analyze(data)
             # 创建一个HTML文件
