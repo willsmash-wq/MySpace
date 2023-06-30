@@ -257,15 +257,30 @@ def data_analysis(request):
 
 def data_analysis(request):
     if request.method == 'POST':
-        excel_file = request.FILES["excel_file"]
-        if (str(excel_file).split('.')[-1] == 'xls' or str(excel_file).split('.')[-1] == 'xlsx'):
-            data_xls = pd.read_excel(excel_file, index_col=None)
-            data_xls.to_csv('output.csv', encoding='utf-8-sig', index=False)
-            data = pd.read_csv('output.csv', encoding='utf-8-sig')
-            sv.config_parser.read("Override.ini")
-            # 创建一个sweetviz的Dataframe报告对象
-            report = sv.analyze(data)
-            # 创建一个HTML文件
-            report.show_html('templates/Mission/Report.html')
-            return render(request, 'Mission/Report.html')
+        data_file = request.FILES["excel_file"]
+        file_extension = str(data_file).split('.')[-1]
+
+        if file_extension in ['xls', 'xlsx']:
+            data = pd.read_excel(data_file, index_col=None)
+        elif file_extension == 'csv':
+            try:
+                data = pd.read_csv(data_file, encoding='utf-8', index_col=None)
+            except UnicodeDecodeError:
+                try:
+                    data = pd.read_csv(data_file, encoding='gb2312', index_col=None)
+                except:
+                    return render(request, 'Mission/data_analysis.html', {'error': '无法解码文件'})
+        else:
+            return render(request, 'Mission/data_analysis.html', {'error': '无效的文件类型'})
+
+        data.to_csv('output.csv', encoding='utf-8-sig', index=False)
+        data = pd.read_csv('output.csv', encoding='utf-8-sig')
+        print(1)
+        # 创建一个sweetviz的Dataframe报告对象
+        report = sv.analyze(data)
+        # 创建一个HTML文件
+        report.show_html('templates/Mission/Report.html')
+        return render(request, 'Mission/Report.html')
+
     return render(request, 'Mission/data_analysis.html')
+
