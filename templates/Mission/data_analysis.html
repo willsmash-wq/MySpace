@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
 
-
-
 {% block content %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input@1.3.4/dist/bs-custom-file-input.min.js"></script>
@@ -33,8 +31,8 @@
                 </div>
                 <div class="modal-body">
                     <div class="progress">
-                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar"
-                             aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                        <div id="animatedProgressBar" class="progress-bar progress-bar-striped" role="progressbar"
+                             aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 50%"></div>
                     </div>
                 </div>
             </div>
@@ -50,19 +48,29 @@
             bsCustomFileInput.init();
 
             $('#upload-form').on('submit', function (e) {
-                e.preventDefault(); //阻止表单的默认提交行为
+                e.preventDefault();
 
-                $('#processingModal').modal({backdrop: 'static', keyboard: false}); //弹出模态框
+                $('#processingModal').modal({backdrop: 'static', keyboard: false});
 
-                $('.progress-bar').addClass('progress-bar-animated'); // 开始进度条动画
+                animateProgressBar();
 
                 setTimeout(function () {
-                    $('#upload-form').unbind('submit').submit(); // 0.5秒后提交表单
+                    $('#upload-form').unbind('submit').submit();
                 }, 500);
             });
+
+            function animateProgressBar() {
+                var colors = ['success', 'danger', 'warning', 'info'];
+                var currentColorIndex = 0;
+                setInterval(function () {
+                    var $progressBar = $('#animatedProgressBar');
+                    $progressBar.removeClass('bg-' + colors[currentColorIndex]);
+                    currentColorIndex = (currentColorIndex + 1) % colors.length;
+                    $progressBar.addClass('bg-' + colors[currentColorIndex]);
+
+                    $progressBar.css('width', (Math.random() * 50 + 50) + '%');
+                }, 500);
+            }
         });
     </script>
-
-
-
 {% endblock %}
