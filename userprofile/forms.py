@@ -1,13 +1,12 @@
 from django import forms
 from django.contrib.auth.models import User
 from .models import Profile
+
 class UserLoginForm(forms.Form):
    username = forms.CharField()
    password = forms.CharField()
 
-
 class UserRegisterForm(forms.ModelForm):
-   # 复写 User 的密码
    password = forms.CharField()
    password2 = forms.CharField()
 
@@ -22,14 +21,11 @@ class UserRegisterForm(forms.ModelForm):
       else:
          raise forms.ValidationError("密码输入不一致,请重试。")
 
-
 class ProfileForm(forms.ModelForm):
-   avatar = forms.ImageField(widget=forms.FileInput)  # add this line
+   avatar = forms.ImageField(widget=forms.FileInput)
    class Meta:
       model = Profile
-      fields = ('phone', 'avatar', 'bio', 'department', 'team')
-
-
+      fields = ('phone', 'avatar', 'bio', 'department', 'team', 'team_leader')
 
 class DepartmentTeamForm(forms.ModelForm):
    DEPARTMENT_CHOICES = [
@@ -52,5 +48,3 @@ class DepartmentTeamForm(forms.ModelForm):
    class Meta:
       model = Profile
       fields = ('department', 'team')
-
-
