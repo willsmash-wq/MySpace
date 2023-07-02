@@ -1,6 +1,9 @@
+import datetime
+
 from django import forms
 from django.contrib.auth.models import User
-from .models import Profile
+from .models import Profile, Keywork
+
 
 class UserLoginForm(forms.Form):
    username = forms.CharField()
@@ -48,3 +51,18 @@ class DepartmentTeamForm(forms.ModelForm):
    class Meta:
       model = Profile
       fields = ('department', 'team')
+
+
+class KeyworkFilterForm(forms.Form):
+   YEAR_CHOICES = [(r, r) for r in range(datetime.datetime.now().year, 2000, -1)]
+   MONTH_CHOICES = [(r, r) for r in range(1, 13)]
+
+   year = forms.ChoiceField(choices=YEAR_CHOICES)
+   month = forms.ChoiceField(choices=MONTH_CHOICES)
+   team = forms.ChoiceField(choices=DepartmentTeamForm.TEAM_CHOICES)
+
+
+class KeyworkEditForm(forms.ModelForm):
+   class Meta:
+      model = Keywork
+      fields = ('content',)

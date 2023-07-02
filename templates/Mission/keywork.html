@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>重点工作</h2>
+
+<form method="get">
+    <h4>筛选</h4>
+    {{ form.as_p }}
+    <button type="submit">筛选</button>
+</form>
+
+{% if keywork %}
+<div>
+    <h4>{{ keywork.team }} {{ keywork.year }}-{{ keywork.month }}</h4>
+    {% if request.user.profile.team_leader and request.user.profile.team == keywork.team %}
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="year" value="{{ form.year.value }}">
+        <input type="hidden" name="month" value="{{ form.month.value }}">
+        <input type="hidden" name="team" value="{{ form.team.value }}">
+        <textarea name="content">{{ keywork.content }}</textarea>
+        <button type="submit">保存</button>
+    </form>
+    {% else %}
+    <p>{{ keywork.content }}</p>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

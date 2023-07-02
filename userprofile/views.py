@@ -1,3 +1,5 @@
+import datetime
+
 from django.shortcuts import render
 
 # Create your views here.
@@ -6,7 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from userprofile.forms import UserLoginForm
+from userprofile.forms import UserLoginForm, DepartmentTeamForm, KeyworkFilterForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -14,7 +16,8 @@ from userprofile.forms import UserLoginForm, UserRegisterForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileForm
-from .models import Profile
+from .models import Profile, Keywork
+
 
 def user_login(request):
     if request.method == "POST":
@@ -42,12 +45,13 @@ def user_login(request):
     else:
         return HttpResponse("请使用GET或POST请求数据")
 
+
 def user_logout(request):
-        logout(request)
-        response = redirect(reverse('userprofile:login'))
-        # 退出登录时清除cookie中的username
-        response.delete_cookie('username')
-        return response
+    logout(request)
+    response = redirect(reverse('userprofile:login'))
+    # 退出登录时清除cookie中的username
+    response.delete_cookie('username')
+    return response
 
 
 def user_register(request):
@@ -70,6 +74,7 @@ def user_register(request):
     else:
         return HttpResponse("请使用GET或POST请求数据")
 
+
 def registered_users(request):
     users = User.objects.values('username')  # 获取所有用户的用户名
     user_list = list(users)  # 转换为Python list
@@ -83,6 +88,7 @@ def check_username(request):
         'is_taken': User.objects.filter(username__iexact=username).exists()
     }
     return JsonResponse(data)
+
 
 @login_required(login_url='/userprofile/login/')
 def user_delete(request, id):
@@ -117,3 +123,33 @@ def profile_edit(request, id):
         return render(request, 'userprofile/edit.html', context)
     else:
         return HttpResponse("请使用GET或POST请求数据")
+
+
+from django.core.exceptions import PermissionDenied
+
+
+@login_required
+def keywork_view(request):
+    year = request.GET.get('year', datetime.datetime.now().year)
+    month = request.GET.get('month', datetime.datetime.now().month)
+    team = request.GET.get('team', request.user.profile.team)
+
+    form = KeyworkFilterForm(initial={'year': year, 'month': month, 'team': team})
+
+    if request.method == 'POST':
+        form = KeyworkFilterForm(request.POST)
+        if form.is_valid():
+            year = form.cleaned_data['year']
+            month = form.cleaned_data['month']
+            team = form.cleaned_data['team']
+            keywork, created = Keywork.objects.get_or_create(year=year, month=month, team=team,
+                                                             defaults={'last_edit_by': request.user})
+            if request.user.profile.team_leader and keywork.team == request.user.profile.team:
+                keywork.content = request.POST.get('content')
+                keywork.last_edit_by = request.user
+                keywork.save()
+
+    keywork, created = Keywork.objects.get_or_create(year=year, month=month, team=team,
+                                                     defaults={'last_edit_by': request.user})
+
+    return render(request, 'Mission/keywork.html', {'form': form, 'keywork': keywork})
