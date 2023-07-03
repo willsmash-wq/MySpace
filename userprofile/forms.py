@@ -2,7 +2,7 @@ import datetime
 
 from django import forms
 from django.contrib.auth.models import User
-from .models import Profile, Keywork
+from .models import Profile, Keywork, Task
 
 
 class UserLoginForm(forms.Form):
@@ -62,7 +62,9 @@ class KeyworkFilterForm(forms.Form):
    team = forms.ChoiceField(choices=DepartmentTeamForm.TEAM_CHOICES)
 
 
-class KeyworkEditForm(forms.ModelForm):
+
+
+class TaskForm(forms.ModelForm):
    class Meta:
-      model = Keywork
-      fields = ('content',)
+      model = Task
+      fields = ['task', 'standard', 'score', 'completion']

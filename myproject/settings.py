@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'userprofile',
     'captcha',
     'django_ckeditor_5',
+    'bootstrap4',
 ]
 
 MIDDLEWARE = [

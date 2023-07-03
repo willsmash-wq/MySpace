@@ -46,8 +46,16 @@ class Keywork(models.Model):
     year = models.IntegerField(default=datetime.datetime.now().year)
     month = models.IntegerField(default=datetime.datetime.now().month)
     team = models.CharField(max_length=100)
-    content = models.TextField()
     last_edit_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
         return f'{self.year}-{self.month} {self.team}'
+
+
+class Task(models.Model):
+    keywork = models.ForeignKey(Keywork, on_delete=models.CASCADE, related_name='tasks')
+    user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    task = models.TextField(blank=True)
+    standard = models.TextField(blank=True)
+    score = models.FloatField(blank=True, null=True)
+    completion = models.TextField(blank=True)

@@ -8,7 +8,7 @@ from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
-from userprofile.forms import UserLoginForm, DepartmentTeamForm, KeyworkFilterForm
+from userprofile.forms import UserLoginForm, DepartmentTeamForm, KeyworkFilterForm, TaskForm
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
@@ -16,7 +16,7 @@ from userprofile.forms import UserLoginForm, UserRegisterForm
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from .forms import ProfileForm
-from .models import Profile, Keywork
+from .models import Profile, Keywork, Task
 
 
 def user_login(request):
@@ -144,12 +144,29 @@ def keywork_view(request):
             team = form.cleaned_data['team']
             keywork, created = Keywork.objects.get_or_create(year=year, month=month, team=team,
                                                              defaults={'last_edit_by': request.user})
-            if request.user.profile.team_leader and keywork.team == request.user.profile.team:
-                keywork.content = request.POST.get('content')
-                keywork.last_edit_by = request.user
-                keywork.save()
+            if created:
+                team_members = Profile.objects.filter(team=team)
+                for member in team_members:
+                    Task.objects.create(keywork=keywork, user=member)
 
-    keywork, created = Keywork.objects.get_or_create(year=year, month=month, team=team,
-                                                     defaults={'last_edit_by': request.user})
+            task_forms = []
+            for task in keywork.tasks.all():
+                task_form = TaskForm(request.POST or None, instance=task, prefix=str(task.id))
+                if task_form.is_valid():
+                    task_form.save()
+                task_forms.append(task_form)
 
-    return render(request, 'Mission/keywork.html', {'form': form, 'keywork': keywork})
+            # 在POST请求后添加渲染模板的返回语句
+            return render(request, 'Mission/keywork.html', {'form': form, 'keywork': keywork, 'task_forms': task_forms})
+
+    else:
+        keywork, created = Keywork.objects.get_or_create(year=year, month=month, team=team,
+                                                         defaults={'last_edit_by': request.user})
+        if created:
+            team_members = Profile.objects.filter(team=team)
+            for member in team_members:
+                Task.objects.create(keywork=keywork, user=member)
+
+        task_forms = [TaskForm(instance=task, prefix=str(task.id)) for task in keywork.tasks.all()]
+        return render(request, 'Mission/keywork.html', {'form': form, 'keywork': keywork, 'task_forms': task_forms})
+
