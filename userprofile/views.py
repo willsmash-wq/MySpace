@@ -136,14 +136,15 @@ def keywork_view(request):
 
     form = KeyworkFilterForm(initial={'year': year, 'month': month, 'team': team})
 
+    keywork, created = Keywork.objects.get_or_create(year=year, month=month, team=team,
+                                                     defaults={'last_edit_by': request.user})
     if request.method == 'POST':
         form = KeyworkFilterForm(request.POST)
         if form.is_valid():
             year = form.cleaned_data['year']
             month = form.cleaned_data['month']
             team = form.cleaned_data['team']
-            keywork, created = Keywork.objects.get_or_create(year=year, month=month, team=team,
-                                                             defaults={'last_edit_by': request.user})
+
             if created:
                 team_members = Profile.objects.filter(team=team)
                 for member in team_members:
@@ -156,17 +157,24 @@ def keywork_view(request):
                     task_form.save()
                 task_forms.append(task_form)
 
-            # 在POST请求后添加渲染模板的返回语句
             return render(request, 'Mission/keywork.html', {'form': form, 'keywork': keywork, 'task_forms': task_forms})
 
     else:
-        keywork, created = Keywork.objects.get_or_create(year=year, month=month, team=team,
-                                                         defaults={'last_edit_by': request.user})
-        if created:
-            team_members = Profile.objects.filter(team=team)
+        team_members = Profile.objects.filter(team=team)
+
+        # 如果团队成员增加，创建新的任务
+        if keywork.tasks.count() != team_members.count():
             for member in team_members:
-                Task.objects.create(keywork=keywork, user=member)
+                Task.objects.get_or_create(keywork=keywork, user=member)
+
+        # 如果团队成员减少，删除多余的任务
+        for task in keywork.tasks.all():
+            if task.user not in team_members:
+                task.delete()
 
         task_forms = [TaskForm(instance=task, prefix=str(task.id)) for task in keywork.tasks.all()]
         return render(request, 'Mission/keywork.html', {'form': form, 'keywork': keywork, 'task_forms': task_forms})
+
+
+
 
