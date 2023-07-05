@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load bootstrap4 %}
-
+{% load static%}
 <!doctype html>
 <html lang="en">
 <head>
@@ -9,65 +9,64 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min-4.3.1.css' %}">
     <title>重点工作</title>
 </head>
 <body>
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row my-4">
-        <div class="col-lg-8 offset-lg-2">
-            <h2 class="display-4 mb-5">重点工作</h2>
+    <div class="container-fluid">
+        <div class="row my-4">
+            <div class="col-lg-8 offset-lg-2">
+                <h2 class="display-4 mb-5">重点工作</h2>
 
-            <form method="get" class="mb-4">
-                <h4>筛选</h4>
-                {% bootstrap_form form %}
-                <button type="submit" class="btn btn-outline-primary">筛选</button>
-            </form>
+                <form method="get" class="mb-4">
+                    <h4>筛选</h4>
+                    {% bootstrap_form form %}
+                    <button type="submit" class="btn btn-outline-primary">筛选</button>
+                </form>
 
-            {% if keywork %}
-            <div class="card shadow-lg">
-                <div class="card-body">
-                    <h4>{{ keywork.team }} {{ keywork.year }}-{{ keywork.month }}</h4>
-                    <form method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="year" value="{{ form.year.value }}">
-                        <input type="hidden" name="month" value="{{ form.month.value }}">
-                        <input type="hidden" name="team" value="{{ form.team.value }}">
+                {% if keywork %}
+                    <div class="card shadow-lg">
+                        <div class="card-body">
+                            <h4>{{ keywork.team }} {{ keywork.year }}-{{ keywork.month }}</h4>
+                            <form method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="year" value="{{ form.year.value }}">
+                                <input type="hidden" name="month" value="{{ form.month.value }}">
+                                <input type="hidden" name="team" value="{{ form.team.value }}">
 
-                        <table class="table table-responsive-sm table-hover">
-                            <thead>
-                            <tr>
-                                <th>组员</th>
-                                <th>重点工作</th>
-                                <th>完成标准</th>
-                                <th>得分</th>
-                                <th>完成情况</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% for task_form in task_forms %}
-                                <tr>
-                                    <td>{{ task_form.instance.user.user.username }}</td>
-                                    <td>{% bootstrap_field task_form.task show_label=False %}</td>
-                                    <td>{% bootstrap_field task_form.standard show_label=False %}</td>
-                                    <td>{% bootstrap_field task_form.score show_label=False %}</td>
-                                    <td>{% bootstrap_field task_form.completion show_label=False %}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
+                                <table class="table table-responsive-sm table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>组员</th>
+                                        <th>重点工作</th>
+                                        <th>完成标准</th>
+                                        <th>得分</th>
+                                        <th>完成情况</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for task_form in task_forms %}
+                                        <tr>
+                                            <td>{{ task_form.instance.user.user.username }}</td>
+                                            <td>{% bootstrap_field task_form.task show_label=False %}</td>
+                                            <td>{% bootstrap_field task_form.standard show_label=False %}</td>
+                                            <td>{% bootstrap_field task_form.score show_label=False %}</td>
+                                            <td>{% bootstrap_field task_form.completion show_label=False %}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
 
-                        <button type="submit" class="btn btn-success">保存</button>
-                    </form>
-                </div>
+                                <button type="submit" class="btn btn-success">保存</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
             </div>
-            {% endif %}
         </div>
     </div>
-</div>
 {% endblock %}
 </body>
 </html>

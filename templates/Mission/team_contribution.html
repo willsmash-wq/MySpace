@@ -4,7 +4,7 @@
 {% load my_filters %}
 
 {% block extra_css %}
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/tailwind.min-2.2.16.css' %}">
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <style>
         @keyframes slide-in-blurred-top {
@@ -65,7 +65,7 @@
             </div>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.2/dist/echarts.min.js"></script>
+    <script src="{% static 'bootstrap/echarts.min.js' %}"></script>
     <script src="{% static 'jquery/index.js' %}"></script>
     <script>
         var option = {
